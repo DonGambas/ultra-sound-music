@@ -20,6 +20,17 @@ async function main() {
   await usmToken.deployed();
 
   console.log("USM Token deployed to:", usmToken.address);
+
+  const USMA = await hre.ethers.getContractFactory("USMArtistToken");
+  const usma = await USMA.deploy();
+
+  await usma.deployed();
+
+  console.log("USMA Token deployed to:", usma.address);
+
+
+
+
 }
 
 // We recommend this pattern to be able to use async/await everywhere
