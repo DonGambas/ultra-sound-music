@@ -28,6 +28,13 @@ async function main() {
 
   console.log("USMA Token deployed to:", usma.address);
 
+  const USMT = await hre.ethers.getContractFactory("USMTrackToken");
+  const usmt = await USMT.deploy();
+
+  await usmt.deployed();
+
+  console.log("USMT Token deployed to:", usmt.address);
+
 
 
 
