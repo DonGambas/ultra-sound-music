@@ -49,7 +49,7 @@ const connectMetaMask = async (setUser) => {
 
     //set the first account in accounts array to the active user account
     const accounts = await ethereum.request({method: 'eth_requestAccounts'})
-    const activeAccount = accounts[0]
+    const activeAccount = accounts[0] || 'Not able to get accounts';
     setUser({wallet: activeAccount})
   } else {
     alert("MetaMask Not Connected")
