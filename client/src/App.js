@@ -1,8 +1,9 @@
 
 import React, { useEffect, useState } from 'react';
 
-import logo from './logo.svg';
+//import logo from './logo.svg';
 import './App.css';
+import { generateAudioFromWallet } from './audio'
 
 const connectMetaMask = async (setUser) => {
 

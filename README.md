@@ -26,11 +26,11 @@ npx hardhat compile
 
 // deploys ERC20 contract to local running network
 
-npx hardhat run scrips/sample-deploy.js
+npx hardhat run scripts/sample-deploy.js
 
 // runs local network and exposes JSON-RPC server at http://127.0.0.1:8545/
 
-npx harhat node
+npx hardhat node
 
 ```
 
