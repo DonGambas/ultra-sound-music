@@ -36,12 +36,14 @@ npx hardhat node
 
 ## Server
 
-Requires aws cli and sam cli to be installed
+create a `.env` file following the example in `.env.example`
+
+to run locally you must mongodb installed and run `mongod` to get a local instance running
 
 ```
-cd lambdas
+cd api
 
 npm i
 
-sam local start-api --port 3001
+npm run start
 ```
