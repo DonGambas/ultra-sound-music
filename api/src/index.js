@@ -1,3 +1,4 @@
+require('dotenv').config()
 const { ethers } = require('ethers');
 const express = require('express');
 const util = require('util');
@@ -21,8 +22,7 @@ const app = express();
 const port = 3001;
 
 
-const providerUrl = 'http://localhost:8545';
-const customHttpProvider = new ethers.providers.JsonRpcProvider(providerUrl);
+const customHttpProvider = new ethers.providers.JsonRpcProvider(process.env.ETH_PROVIDER);
 
 let contract = new ethers.Contract(
   // TODO: improve next line
@@ -34,7 +34,7 @@ let contract = new ethers.Contract(
 // connect to DB 
 
 var mongoDB = 'mongodb://localhost:27017';
-mongoose.connect(mongoDB, {useNewUrlParser: true, useUnifiedTopology: true}, () => mongoose.connection.db.dropDatabase());
+mongoose.connect(process.env.MONGO_DB, {useNewUrlParser: true, useUnifiedTopology: true}, () => mongoose.connection.db.dropDatabase());
 
 //Get the default connection
 var db = mongoose.connection;
