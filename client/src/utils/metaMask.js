@@ -11,24 +11,24 @@ export function isConnected() {
 }
 
 export async function request() {
-  return isInstalled() && ethereum.request()
+  return isInstalled() && ethereum.request();
 }
 
 export async function getChainId() {
-  return await ethereum.request({ method: 'eth_chainId' })  
+  return await ethereum.request({ method: 'eth_chainId' });
 }
 
 export async function requestAccessToWallet() {
-  return new ethers.providers.Web3Provider(ethereum);  //Request access to user's accounts
+  return new ethers.providers.Web3Provider(ethereum); // Request access to user's accounts
 }
 
 export async function getAccountId() {
-  const accounts = await ethereum.request({method: 'eth_requestAccounts'});
+  const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
   return accounts[0] || 'Not able to get accounts';
 }
 
-export async function connectToMetaMask({setUser}) {
-  const accounts = await ethereum.request({method: 'eth_requestAccounts'})
+export async function connectToMetaMask({ setUser }) {
+  const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
   const activeAccount = accounts[0] || 'Not able to get accounts';
-  setUser({wallet: activeAccount})
+  setUser({ wallet: activeAccount });
 }

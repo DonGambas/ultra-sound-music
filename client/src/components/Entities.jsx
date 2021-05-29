@@ -1,4 +1,5 @@
 import React  from 'react';
+// import CardDeck from 'react-bootstrap/CardDeck';
 import EntityCard from './EntityCard';
 
 import './Entities.scss';
@@ -12,7 +13,7 @@ export class Entities extends React.Component {
   render() {
     return (
       <div className='Entities'>
-        {this.renderArtists()}
+          {this.renderArtists()}
       </div>
     );    
   }

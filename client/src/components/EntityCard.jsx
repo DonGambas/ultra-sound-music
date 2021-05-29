@@ -2,10 +2,12 @@ import React  from 'react';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 
+import './EntityCard.scss';
+
 export class EntityCard extends React.Component {
   render() {
     return (
-      <Card className='EntityCard' style={{ width: '18rem' }}>
+      <Card className='EntityCard'>
         <Card.Img variant="top" src="holder.js/100px180" />
         <Card.Body>
           <Card.Title>Card Title</Card.Title>

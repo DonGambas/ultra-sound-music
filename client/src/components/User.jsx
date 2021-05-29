@@ -17,20 +17,9 @@ export class User extends React.Component {
     }
   }
 
-  state = {
-    chainId: null,
-    accountId: null
-  }
-
   componentDidMount() {
     // Set the accountId && chainId
   }
-
-  setAccountId = (accountId) => {
-    this.setState({
-      accountId
-    });
-  };
 
   onMetaMaskConnect = () => {
     
@@ -41,12 +30,23 @@ export class User extends React.Component {
       <div className='User'>
         <Row>
           <Col>
-            <p>{`Chain Id: ${this.state.chainId}`}</p>
-            <p>{`Active wallet: ${this.state.accountId}`}</p>
-            <MetaMaskButton onConnect={this.setAccountId} />
+            <p>{`Chain Id: ${this.props.chainId}`}</p>
+            <p>{`Active wallet: ${this.props.accountId}`}</p>
+            <MetaMaskButton />
           </Col>
+        </Row>
+        <Row>
+          <Controls />
+        </Row>
+        <Row>
           <Col>
-            {/* {!user.wallet &&
+            <div className="">
+              You've already minted a token!!!
+            </div>
+          </Col>
+        </Row>        
+        <Row>
+           {/* {!user.wallet &&
               <Button style={{ width: "250px", height: "50px" }} onClick={() => connectMetaMask(setUser)}>Connect Metamask</Button>
             }
             {user.wallet?.length > 0 &&
@@ -59,9 +59,7 @@ export class User extends React.Component {
                   downloadAudio()
                 }}>Download Audio</Button>
               </>
-            } */}
-            <Controls />
-          </Col>
+            } */}          
         </Row>
       </div>
     );
