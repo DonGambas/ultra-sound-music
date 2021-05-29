@@ -19,7 +19,7 @@ export class Searchable extends React.Component {
   setFilteredEntities(entities) {
     this.setState({
       isFiltered: !!entities,
-      filteredEntities: entities
+      filteredEntities: entities || []
     })
   }
 

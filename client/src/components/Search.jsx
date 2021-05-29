@@ -24,12 +24,12 @@ export class Search extends React.Component {
     this.props.onChange(target.value);
   }
 
-  onClear({target}) {
+  onClear = () => {
     this.setState({
       searchStr:''
     });
 
-    this.props.onChange(target.value);
+    this.props.onClear();
   }
 
   render() {
@@ -43,7 +43,7 @@ export class Search extends React.Component {
           aria-describedby="basic-addon2"
         />
         <InputGroup.Append>
-          <InputGroup.Text onClick={this.props.onClear}>Clear</InputGroup.Text>
+          <InputGroup.Text onClick={this.onClear}>Clear</InputGroup.Text>
         </InputGroup.Append>
       </InputGroup>  
     )
