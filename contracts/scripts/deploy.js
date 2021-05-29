@@ -21,22 +21,12 @@ async function main() {
 
   console.log("USM Token deployed to:", usmToken.address);
 
-  const USMA = await hre.ethers.getContractFactory("USMArtistToken");
-  const usma = await USMA.deploy();
+  const UltraSoundMusic = await hre.ethers.getContractFactory("UltraSoundMusic");
+  const ultraSoundMusic = await UltraSoundMusic.deploy();
 
-  await usma.deployed();
+  await ultraSoundMusic.deployed();
 
-  console.log("USMA Token deployed to:", usma.address);
-
-  const USMT = await hre.ethers.getContractFactory("USMTrackToken");
-  const usmt = await USMT.deploy();
-
-  await usmt.deployed();
-
-  console.log("USMT Token deployed to:", usmt.address);
-
-
-
+  console.log("USMA Token deployed to:", ultraSoundMusic.address)
 
 }
 
