@@ -1,65 +1,83 @@
 import React  from 'react';
-import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import MetaMaskButton from './MetaMaskButton';
+import { ethers } from 'ethers';  
 import Controls from './Controls';
-import { togglePlayback, downloadAudio } from '../audio'
 import * as metaMask from '../utils/metaMask';
+
 
 import './User.scss';
 
 export class User extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      nextPlayState: true
-    }
+  state = {
+    isConnectedToNetwork: false,
+    isConnectedToAccount: false,
+    chainId: '',
+    accountId: ''
   }
 
-  componentDidMount() {
-    // Set the accountId && chainId
+  async componentDidMount() {
+    const chainId = await metaMask.getChainId();
+    const accountId = await metaMask.getAccountId();
+    const isConnectedToAccount = await metaMask.isConnectedToAccount();
+    const isConnectedToNetwork = metaMask.isConnectedToNetwork();
+
+    this.setState({
+      isConnectedToNetwork,
+      isConnectedToAccount,
+      chainId,
+      accountId
+    })
+
+    ethereum.on('chainChanged', (chainId) => {
+      this.setState({
+        isConnectedToNetwork: !!chainId,
+        chainId
+      })
+    });
+
+    ethereum.on('accountsChanged', (accounts) => {
+      const accountId = accounts[0];
+      this.setState({
+        isConnectedToAccount: !!accountId,
+        accountId
+      })
+    });
   }
 
-  onMetaMaskConnect = () => {
-    
-  }  
+  async componentWillUnmount() {
+    // @Todo need to remove ethereum event handlers
+  }
 
   render() {
+    const hasAlreadyMinted = false;
+    let content;
+    if (hasAlreadyMinted) {
+      content = 'You\'ve already minted a token!!!'
+    } else if (this.state.isConnectedToAccount) {
+      content = <Controls />;
+    } else {
+      content = <MetaMaskButton />
+    }
+
+    let userInfo;
+    if (this.state.isConnectedToNetwork) {
+      userInfo = (
+        <div>
+            <p>{`Chain Id: ${this.state.chainId}`}</p>
+            <p>{`Active wallet: ${this.state.accountId}`}</p> 
+        </div>
+      );
+    } 
+
     return (
       <div className='User'>
         <Row>
           <Col>
-            <p>{`Chain Id: ${this.props.chainId}`}</p>
-            <p>{`Active wallet: ${this.props.accountId}`}</p>
-            <MetaMaskButton />
+            {userInfo}
+            {content}
           </Col>
-        </Row>
-        <Row>
-          <Controls />
-        </Row>
-        <Row>
-          <Col>
-            <div className="">
-              You've already minted a token!!!
-            </div>
-          </Col>
-        </Row>        
-        <Row>
-           {/* {!user.wallet &&
-              <Button style={{ width: "250px", height: "50px" }} onClick={() => connectMetaMask(setUser)}>Connect Metamask</Button>
-            }
-            {user.wallet?.length > 0 &&
-              <>
-                <Button if style={{ width: "250px", height: "40px", margin: "8px" }} onClick={() => {
-                  togglePlayback(this.state.nextPlayState)
-                  this.setState({ nextPlayState: !this.state.nextPlayState })
-                }}>{this.state.nextPlayState ? 'Play Audio' : 'Stop Audio'}</Button>
-                <Button if style={{ width: "250px", height: "40px", margin: "8px" }} onClick={() => {
-                  downloadAudio()
-                }}>Download Audio</Button>
-              </>
-            } */}          
         </Row>
       </div>
     );

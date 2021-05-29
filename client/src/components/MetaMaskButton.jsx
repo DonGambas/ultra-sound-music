@@ -1,27 +1,22 @@
 import React  from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Button from 'react-bootstrap/Button';
 import * as metaMask from '../utils/metaMask';
+import * as Actions from '../redux/actions';
 
 export class MetaMaskButton extends React.Component {
   static propTypes = {
-    connectMetaMask: PropTypes.func
+    installMetaMask: PropTypes.func,
+    connectToWallet: PropTypes.func
   }
 
-  onClickInstall = async () => {
-    try {
-      // Will open the MetaMask UI
-      // await ethereum.request({ method: 'eth_requestAccounts' });
-    } catch (error) {
-      console.error(error);
-    }
+  onClickInstall = () => {
+    this.props.installMetaMask();
   }
 
   onClickConnect = () => {
-    metaMask.requestAccessToWallet();
-    metaMask.getAccountId().then((accountId) => {
-      this.setAccountId(accountId)
-    });
+    this.props.connectToWallet();
   }
 
   renderInstallButton() {
@@ -32,7 +27,7 @@ export class MetaMaskButton extends React.Component {
 
   renderConnectButton() {
     return (
-      <Button onClick={this.onClickConnect}>Connect</Button>
+      <Button onClick={this.onClickConnect}>Connect to MetaMask</Button>
     );
   }
 
@@ -45,4 +40,11 @@ export class MetaMaskButton extends React.Component {
   }
 }
 
-export default MetaMaskButton;
+function mapDispatchToProps() {
+  return {
+    installMetaMask: Actions.installMetaMask,
+    connectToWallet: Actions.connectToWallet
+  }
+}
+
+export default connect(null, mapDispatchToProps)(MetaMaskButton);

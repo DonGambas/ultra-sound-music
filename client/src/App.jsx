@@ -15,7 +15,7 @@ import Col from 'react-bootstrap/Col';
 
 import CollectionNav from './components/CollectionNav';
 import About from './components/About';
-import Home from './components/Home';
+import User from './components/User';
 import NotConnectedModal from './components/NotConnectedModal';
 import MyCollection from './components/MyCollection';
 import Wild from './components/Wild';
@@ -57,7 +57,7 @@ export class App extends React.Component {
                       <About />
                     </Route>                    
                     <Route path="/">
-                      <Home />
+                      <User />
                       <CollectionNav />
                       <Switch>
                         <Route path="/myCollection">
@@ -74,7 +74,7 @@ export class App extends React.Component {
             </Container>
           </div>
         </Router>
-        {this.props.shoulShowModal && <NotConnectedModal />} 
+        <NotConnectedModal show={this.props.shoulShowModal}/> 
       </div>
     );    
   }
