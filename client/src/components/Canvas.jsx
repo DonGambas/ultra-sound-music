@@ -32,14 +32,12 @@ export class Canvas extends React.Component {
             console.log('Canvas', 'rgbArr', rgbArr);
 
             iso = new Isomer(document.getElementById("canvas"));
-            const cube = Isomer.Shape.Prism(Isomer.Point.ORIGIN).scale(Isomer.Point.ORIGIN, 0.3, 0.3, 0.3)
-            iso.add(cube)
-            let i = 0
+            const cube = Isomer.Shape.Prism(Isomer.Point.ORIGIN).scale(Isomer.Point.ORIGIN, 2, 2, 0.3)
+            let i = -1.2
             for (let color of rgbArr) {
                 const isoColor = new Isomer.Color(color.r, color.g, color.b)
                 iso.add(cube.translate(0, 0, i), isoColor)
-                //isomerArr.push(Isomer.Shape.Prism(new Isomer.Point(i, 0, 0), 0.2, 0.2, 0.2))
-                i = i + 0.2
+                i = i + 0.6
             }
         }
     }
@@ -47,7 +45,7 @@ export class Canvas extends React.Component {
     render() {
         return (
             <div className="Canvas">
-                <canvas id="canvas" width="128" height="128" />
+                <canvas id="canvas" width="256" height="256" />
             </div>
         );
     }
