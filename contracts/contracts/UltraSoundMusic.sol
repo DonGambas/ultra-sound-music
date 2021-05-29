@@ -35,6 +35,17 @@ contract UltraSoundMusic is ERC1155 {
     // has a member of a band minted a track on behalf of the band
     mapping(uint256 => mapping(uint256 => bool)) private mintedTracks;
 
+    // events
+
+    event bandCreate(uint256 id, uint256 artistId, address owner);
+    event bandJoined(uint256 id, uint256 artistId, address owner);
+    event trackCreated(
+        uint256 trackId,
+        uint256 bandId,
+        uint256 artistId,
+        address owner
+    );
+
     Counters.Counter private _artistTokenIds;
     Counters.Counter private _bandTokenIds;
     Counters.Counter private _trackTokenIds;
@@ -111,6 +122,7 @@ contract UltraSoundMusic is ERC1155 {
         require(!_isBandJoinable(bandId), "this band is already active");
         bandLeaders[bandId] = msg.sender;
         bandAttestations[bandId] = 1;
+        emit bandCreate(bandId, artistId, msg.sender);
         return bandId;
     }
 
@@ -129,6 +141,7 @@ contract UltraSoundMusic is ERC1155 {
         uint256 numAttest = bandAttestations[bandId];
         bandAttestations[bandId] += 1;
         bandMembers[bandId][artistId] = true;
+        emit bandJoined(bandId, artistId, msg.sender);
         if (numAttest + 1 == 4) {
             _mint(bandLeaders[bandId], bandId, 1, "");
         }
@@ -149,7 +162,7 @@ contract UltraSoundMusic is ERC1155 {
         require(_ownsArtist(artistId), "you do not own the specified artist");
         require(_isBandMember(bandId, artistId), "you're not in the band");
         require(
-            _hasMintedTrack(bandId, artistId),
+            !_hasMintedTrack(bandId, artistId),
             "artist already minted track"
         );
 
@@ -158,6 +171,7 @@ contract UltraSoundMusic is ERC1155 {
         _mint(msg.sender, newTokenId, 1, "");
         MetadataUris[newTokenId] = _uri;
         allTrackTokens.push(newTokenId);
+        emit trackCreated(newTokenId, bandId, artistId, msg.sender);
         return newTokenId;
     }
 

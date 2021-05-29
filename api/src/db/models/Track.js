@@ -4,8 +4,9 @@ const schema = mongoose.Schema({
   tokenId: Number,
 	creator: String,
 	owner: String,
-  metadataUri: String,
   tokenType: String,
+  band: Number,
+  metadataUri: String,
 })
 
-module.exports = mongoose.model("Artist", schema)
+module.exports = mongoose.model("Track", schema)

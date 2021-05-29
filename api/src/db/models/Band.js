@@ -5,7 +5,9 @@ const schema = mongoose.Schema({
 	creator: String,
 	owner: String,
   metadataUri: String,
-  tokenType: String,
+  members: Array,
+  active: Boolean,
+  tokenType: String
 })
 
-module.exports = mongoose.model("Artist", schema)
+module.exports = mongoose.model("Band", schema)

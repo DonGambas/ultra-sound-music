@@ -4,6 +4,8 @@ const util = require('util');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const Artist = require("./db/models/Artist") // new
+const Track = require("./db/models/Track")
+const Band = require ("./db/models/Band")
 
 
 const Network = require( './contracts/network.json');
@@ -32,7 +34,7 @@ let contract = new ethers.Contract(
 // connect to DB 
 
 var mongoDB = 'mongodb://localhost:27017';
-mongoose.connect(mongoDB, {useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.connect(mongoDB, {useNewUrlParser: true, useUnifiedTopology: true}, () => mongoose.connection.db.dropDatabase());
 
 //Get the default connection
 var db = mongoose.connection;
@@ -55,7 +57,6 @@ app.use((req, res, next) => {
 });
 
 const handleArtistToken = async(from,to,id) =>{
-
   console.log("handle artist being called")
   if(from === nullAddress){
     console.log("handling new artist token")
@@ -66,24 +67,64 @@ const handleArtistToken = async(from,to,id) =>{
       owner: to,
       metadataUri
     })
-
-    await artist.save()
-
-    const artistNew = await Artist.findOne({ id })
-
-    console.log(artistNew)
-
-
+    return artist.save()
   }
-
-
-
 }
 
+const handleBandToken = async(id, artistId, owner) =>{
+    console.log("handling new band token")
+    //const metadataUri = await contract.uri(id)
+    const band = new Band({
+      tokenId: id,
+      creator: artistId,
+      owner,
+      //metadataUri
+      members: [{artistId: Number(artistId), owner}],
+      active: false,
+      tokenType:"band"
+    })
+    return band.save()
+}
+
+const handleJoinBand = async(id, artistId, owner) =>{
+  console.log("handling new band token")
+
+  const band = await Band.findOne({tokenId: id })
+  const currMembers = band.members;
+  currMembers.push({artistId: Number(artistId), owner})
+  band.active = currMembers.length === 4 ? true:false;
+  return band.save()
+}
+
+
+const handleTrackToken = async(trackId, bandId, artistId, owner) =>{
+  console.log("handling new Track")
+    const metadataUri = await contract.uri(trackId)
+    const track = new Track({
+      tokenId: trackId,
+      creator: artistId,
+      owner,
+      metadataUri,
+      band: bandId,
+      tokenType:"track",
+
+    })
+    return track.save()
+}
 
 app.get('/cache/artists', async (req, res) => {
   const artists = await Artist.find()
 	res.send(artists)
+});
+
+app.get('/cache/bands', async (req, res) => {
+  const bands = await Band.find()
+	res.send(bands)
+});
+
+app.get('/cache/tracks', async (req, res) => {
+  const tracks = await Track.find()
+	res.send(tracks)
 });
 
 app.listen(port, async () => {
@@ -98,10 +139,6 @@ app.listen(port, async () => {
       UltraSoundMusicABI,
       customHttpProvider,
     )
-
-    const network = await customHttpProvider.getNetwork();
-
-    console.log("network", network)
   
     contract.on("TransferSingle", async (operator, from, to, id, value, event) => {
 
@@ -118,6 +155,21 @@ app.listen(port, async () => {
         //handle track token write id, to as owner and metadataURI
         console.log(`track token id = ${id} transfered`)
       }
+    });
+
+    contract.on("bandCreate", async (id, artistId, owner, event) => {
+      await handleBandToken(id, artistId, owner)
+    });
+
+    contract.on("bandJoined", async (id, artistId, owner, event) => {
+      console.log(`band was joined by ${owner} id = ${id}`)
+      await handleJoinBand(id, artistId, owner)
+    });
+
+    contract.on("trackCreated", async (trackId,bandId, artistId, owner) => {
+      await handleTrackToken(trackId, bandId, artistId, owner)
+      console.log(`track was created by ${owner} id = ${artistId}`)
+
     });
 
     console.log(`Example app listening on port ${port}!`);
