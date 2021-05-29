@@ -15,23 +15,25 @@ export default function modalReducer(state = initialState, action) {
 
   switch (type) {
     case ActionTypes.SHOW_MODAL: {
-      const newState = Object.assign({}, state, {
+      const newState = {
+        ...state,
         shouldShowModal: true,
         modalTitle: data.title,
         modalBodyText: data.bodyText,
         modalCTA: data.ctaText,
-      });
+      };
 
-      return newState;  
+      return newState;
     }
 
     case ActionTypes.HIDE_MODAL: {
-      const newState = Object.assign({}, state, {
+      const newState = {
+        ...state,
         shouldShowModal: false,
         modalTitle: initialState.modalTitle,
         modalBodyText: initialState.modalBodyText,
         modalCTA: initialState.modalCTA,
-      });
+      };
 
       return newState;
     }
