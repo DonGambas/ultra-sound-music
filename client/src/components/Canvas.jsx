@@ -25,7 +25,7 @@ export class Canvas extends React.Component {
     }
 
     componentDidUpdate() {
-        if (!iso && this.props.address) {
+        if (this.props.address) {
             const splitArr = this.props.address.split('x');
             const fortyChars = splitArr[1].toLowerCase();
 

@@ -1,5 +1,4 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import {
   BrowserRouter as Router,
@@ -16,7 +15,7 @@ import Col from 'react-bootstrap/Col';
 import CollectionNav from './components/CollectionNav';
 import About from './components/About';
 import User from './components/User';
-import NotConnectedModal from './components/NotConnectedModal';
+import Alert from './components/Alert';
 import Searchable from './components/Searchable';
 
 import './App.css';
@@ -24,10 +23,6 @@ import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 export class App extends React.Component {
-  static propTypes = {
-    shoulShowModal: PropTypes.bool
-  }
-
   state = {
     myCollection: [],
     wild: []
@@ -93,17 +88,11 @@ export class App extends React.Component {
             </Container>
           </div>
         </Router>
-        <NotConnectedModal show={this.props.shoulShowModal}/> 
+        <Alert /> 
       </div>
     );    
   }
 }
 
-export function mapStateToProps(state) {
-  return {
-    shoulShowModal: state.modal.shoulShowModal
-  }
-}
-
-export default connect(mapStateToProps)(App);
+export default App;
 

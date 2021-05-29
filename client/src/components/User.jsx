@@ -38,7 +38,7 @@ export class User extends React.Component {
       })
     })
 
-    ethereum.on('accountsChanged', (accounts) => {
+    ethereum.on('accountsChanged', (accounts, a, b) => {
       const accountId = accounts[0];
       this.setState({
         isConnectedToAccount: !!accountId,
@@ -57,7 +57,7 @@ export class User extends React.Component {
     if (hasAlreadyMinted) {
       content = 'You\'ve already minted a token!!!'
     } else if (this.state.isConnectedToAccount) {
-      content = <Controls />;
+      content = <Controls accountId={this.state.accountId} />;
     } else {
       content = <MetaMaskButton />
     }

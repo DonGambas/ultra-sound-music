@@ -1,7 +1,10 @@
 import React from 'react';
+import { connect } from 'react-redux'; 
+import PropTypes from 'prop-types';
 import Button from 'react-bootstrap/Button';
 import { ethers } from 'ethers';
 import { togglePlayback, downloadAudio } from '../audio'
+import * as Actions from '../redux/actions';
 import * as metaMask from '../utils/metaMask';
 import ArtistAbi from '../web3/ArtistAbi';
 
@@ -14,6 +17,10 @@ export class Controls extends React.Component {
     }
   }
 
+  static propTypes = {
+    accountId: PropTypes.string
+  }
+
   async createArtist() {
     const contractAddress = '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512';
 
@@ -24,7 +31,10 @@ export class Controls extends React.Component {
       const fakeTokenId = `${Date.now()}`
       await writeContract.createArtist(fakeTokenId);
     } catch (error) {
-      alert(JSON.stringify(error));
+      this.props.showModal({
+        title: 'Error',
+        bodyText: JSON.stringify(error)
+      });
     }
   }
 
@@ -38,11 +48,11 @@ export class Controls extends React.Component {
         <Button onClick={this.onClickCreateArtist}>Create Artist</Button>
         {
           <>
-            <Button if style={{ width: "250px", height: "40px", margin: "8px" }} onClick={async () => {
-              this.setState({ currentPlayState: await togglePlayback(await metaMask.getAccountId()) })
+            <Button style={{ width: "250px", height: "40px", margin: "8px" }} onClick={async () => {
+              this.setState({ currentPlayState: await togglePlayback(this.props.accountId) })
             }}>{this.state.currentPlayState ? 'Stop Audio' : 'Play Audio'}</Button>
-            <Button if style={{ width: "250px", height: "40px", margin: "8px" }} onClick={async () => {
-              downloadAudio(await metaMask.getAccountId())
+            <Button style={{ width: "250px", height: "40px", margin: "8px" }} onClick={async () => {
+              downloadAudio(this.props.accountId)
             }}>Download Audio</Button>
           </>
         }
@@ -51,4 +61,8 @@ export class Controls extends React.Component {
   }
 }
 
-export default Controls;
+const mapDispatchToProps = {
+  showModal: Actions.showModal
+};
+
+export default connect(null, mapDispatchToProps)(Controls);
