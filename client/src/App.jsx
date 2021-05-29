@@ -19,13 +19,10 @@ import User from './components/User';
 import NotConnectedModal from './components/NotConnectedModal';
 import MyCollection from './components/MyCollection';
 import Wild from './components/Wild';
-import ArtistAbi from './web3/ArtistAbi';
 
 import './App.css';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
-
-const address = '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512';
 
 export class App extends React.Component {
   static propTypes = {

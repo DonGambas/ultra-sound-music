@@ -17,3 +17,7 @@ rules:
   no-unused-vars: warn
   no-use-before-define: off
   import/prefer-default-export: warn
+  comma-dangle: never
+  semi: 
+    - error
+    - always

@@ -21,7 +21,7 @@ export class User extends React.Component {
     const chainId = await metaMask.getChainId();
     const accountId = await metaMask.getAccountId();
     const isConnectedToAccount = await metaMask.isConnectedToAccount();
-    const isConnectedToNetwork = metaMask.isConnectedToNetwork();
+    const isConnectedToNetwork = metaMask.isConnectedToNetwork()
 
     this.setState({
       isConnectedToNetwork,
@@ -35,7 +35,7 @@ export class User extends React.Component {
         isConnectedToNetwork: !!chainId,
         chainId
       })
-    });
+    })
 
     ethereum.on('accountsChanged', (accounts) => {
       const accountId = accounts[0];
