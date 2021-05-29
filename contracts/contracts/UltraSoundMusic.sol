@@ -25,7 +25,16 @@ contract UltraSoundMusic is ERC1155 {
     mapping(uint256 => string) public MetadataUris;
 
     //if band has sufficient members can be minted
-    mapping(uint256 => bool) private bandMintable;
+    mapping(uint256 => uint256) private bandAttestations;
+
+    //bandd members
+    mapping(uint256 => mapping(address => bool)) private bandMembers;
+
+    // who is the leadder of the band
+    mapping(uint256 => adddress) private bandLeaders;
+
+    // has a member of a band minted a track on behalf of the band
+    mapping(uint256 => mapping(address => bool)) private mintedTracks;
 
     Counters.Counter private _artistTokenIds;
 
@@ -35,6 +44,32 @@ contract UltraSoundMusic is ERC1155 {
 
     function artistCount() public view returns (uint256) {
         return _artistTokenIds.current();
+    }
+
+    function _ownsArtist(uint256 artistId) private returns (bool) {
+        return balanceOf(msg.sender, artistId) > 0;
+    }
+
+    function _isBandMintable(uint256 bandId) private returns (bool) {
+        return bandAttestations[bandId] == 4;
+    }
+
+    function _isBandJoinabble(uint256 bandId) private returns (bool) {
+        return bandAttestation[bandId] > 0;
+    }
+
+    function _isBandMember(uint256 bandId, address member)
+        private
+        returns (bool)
+    {
+        return bandMembers[bandId][member];
+    }
+
+    function _hasMintedTrack(uint256 bandId, address member)
+        private
+        returns (bool)
+    {
+        return mintedTracks[bandId][memberd];
     }
 
     /*
@@ -62,11 +97,11 @@ contract UltraSoundMusic is ERC1155 {
         public
         returns (uint256)
     {
-        uint256 newTokenId = BAND_PREFIX + idPartial;
-        // is owner of artist ID
-        // check that band is not active
-        // add band Id to is active false
-        // create tracking for band votes
+        require(_ownsArtist(artistId), "you do not own the specified artist");
+        uint256 bandId = BAND_PREFIX + idPartial;
+        require(!_isBandJoinable(bandId), "this band is already active");
+        bandLeader[bandId] = msg.sender;
+        bandAttestations[bandId].push(message.sender);
     }
 
     /*
@@ -78,32 +113,15 @@ contract UltraSoundMusic is ERC1155 {
         public
         returns (uint256)
     {
-        // check msg.sender not currently in band
-        // add msg.sender to band votes
-        // if band votes === 4 set active
-        //return current # of attestations
-    }
+        require(_ownsArtist(artistId), "you do not own the specified artist");
+        require(!_isBandMintable(bandId), "this band is already active");
 
-    // TODO: should ban be automatically minted on 4th vote or should be there be another function t ocall it
-
-    /*
-     * @dev function to mint band NFT, requiries band to be active and for artist to be owned by msg
-     * sender and for artist to be band leader
-     */
-
-    function createBand(
-        string memory _uri,
-        uint256 bandId,
-        uint256 artistId
-    ) public returns (uint256) {
-        //msg.sender = owner of artistID
-        //artistID = proposer of band
-        //band is mintable
-
-        _mint(msg.sender, bandId, 1, "");
-        MetadataUris[bandId] = _uri;
-        allBandTokens.push(bandId);
-        return bandId;
+        const numAttest = bandAttestations[bandId].length();
+        bandAttestations[bandId].push(msg.sender);
+        if (numAttest + 1 == 4) {
+            address bandLeader = bandLeadders[bandId];
+            _mint(bandLeader, bandId, 1, "");
+        }
     }
 
     /*
@@ -118,8 +136,12 @@ contract UltraSoundMusic is ERC1155 {
         string memory _uri,
         uint256 idPartial
     ) public returns (uint256) {
-        // check msg.sender owner of artist and that artist in band
-        //check tracks minted by band for artist, only 1 track per artist
+        require(_ownsArtist(artistId), "you do not own the specified artist");
+        require(_isBandMember(bandid, artistId), "you're not in the band");
+        require(
+            _hasMintedTrack(bandId, artistId),
+            "artist already minted track"
+        );
 
         uint256 newTokenId = TRACK_PREFIX + idPartial;
         _mint(msg.sender, newTokenId, 1, "");
