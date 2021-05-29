@@ -26,7 +26,8 @@ async function main() {
 
   await ultraSoundMusic.deployed();
 
-  console.log("USMA Token deployed to:", ultraSoundMusic.address)
+  console.log("Ultra Sound Music Token deployed to:", ultraSoundMusic.address)
+  console.log(await ultraSoundMusic.artistCount())
 
 }
 

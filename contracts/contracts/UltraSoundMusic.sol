@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: MIT
+
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
@@ -6,14 +8,11 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 contract UltraSoundMusic is ERC1155 {
     using Counters for Counters.Counter;
 
-    // prefix for artist NFTs
-    uint256 private constant ARTIST_PREFIX = 111 << 128;
-
     //prefix for band NFTs
-    uint256 public constant BAND_PREFIX = 111 << 128;
+    uint256 public constant BAND_PREFIX = 100;
 
     // prefix for track NFTs
-    uint256 public constant TRACK_PREFIX = 222 << 128;
+    uint256 public constant TRACK_PREFIX = 100000;
 
     // max num artists
     uint256 public constant ARTIST_CAP = 80;
@@ -28,15 +27,17 @@ contract UltraSoundMusic is ERC1155 {
     mapping(uint256 => uint256) private bandAttestations;
 
     //bandd members
-    mapping(uint256 => mapping(address => bool)) private bandMembers;
+    mapping(uint256 => mapping(uint256 => bool)) private bandMembers;
 
     // who is the leadder of the band
-    mapping(uint256 => adddress) private bandLeaders;
+    mapping(uint256 => address) private bandLeaders;
 
     // has a member of a band minted a track on behalf of the band
-    mapping(uint256 => mapping(address => bool)) private mintedTracks;
+    mapping(uint256 => mapping(uint256 => bool)) private mintedTracks;
 
     Counters.Counter private _artistTokenIds;
+    Counters.Counter private _bandTokenIds;
+    Counters.Counter private _trackTokenIds;
 
     constructor() ERC1155("https://token.example/type/{id}.json") {}
 
@@ -60,13 +61,13 @@ contract UltraSoundMusic is ERC1155 {
 
     // can the band currently be joined
 
-    function _isBandJoinabble(uint256 bandId) private returns (bool) {
-        return bandAttestation[bandId] > 0;
+    function _isBandJoinable(uint256 bandId) private returns (bool) {
+        return bandAttestations[bandId] > 0;
     }
 
     // is an artist a member of the specified band
 
-    function _isBandMember(uint256 bandId, address member)
+    function _isBandMember(uint256 bandId, uint256 member)
         private
         returns (bool)
     {
@@ -75,11 +76,11 @@ contract UltraSoundMusic is ERC1155 {
 
     // has a member of a band minted a track
 
-    function _hasMintedTrack(uint256 bandId, address member)
+    function _hasMintedTrack(uint256 bandId, uint256 member)
         private
         returns (bool)
     {
-        return mintedTracks[bandId][memberd];
+        return mintedTracks[bandId][member];
     }
 
     /*
@@ -103,15 +104,14 @@ contract UltraSoundMusic is ERC1155 {
      * @dev function to start a band, must provide artistId that you own, and partialId
      */
 
-    function startBand(uint256 artistId, uint256 idPartial)
-        public
-        returns (uint256)
-    {
+    function startBand(uint256 artistId) public returns (uint256) {
         require(_ownsArtist(artistId), "you do not own the specified artist");
-        uint256 bandId = BAND_PREFIX + idPartial;
+        _bandTokenIds.increment();
+        uint256 bandId = BAND_PREFIX + _bandTokenIds.current();
         require(!_isBandJoinable(bandId), "this band is already active");
-        bandLeader[bandId] = msg.sender;
-        bandAttestations[bandId].push(message.sender);
+        bandLeaders[bandId] = msg.sender;
+        bandAttestations[bandId] = 1;
+        return bandId;
     }
 
     /*
@@ -126,12 +126,13 @@ contract UltraSoundMusic is ERC1155 {
         require(_ownsArtist(artistId), "you do not own the specified artist");
         require(!_isBandMintable(bandId), "this band is already active");
 
-        const numAttest = bandAttestations[bandId].length();
-        bandAttestations[bandId].push(msg.sender);
+        uint256 numAttest = bandAttestations[bandId];
+        bandAttestations[bandId] += 1;
+        bandMembers[bandId][artistId] = true;
         if (numAttest + 1 == 4) {
-            address bandLeader = bandLeadders[bandId];
-            _mint(bandLeader, bandId, 1, "");
+            _mint(bandLeaders[bandId], bandId, 1, "");
         }
+        return bandId;
     }
 
     /*
@@ -143,17 +144,17 @@ contract UltraSoundMusic is ERC1155 {
     function createTrack(
         uint256 artistId,
         uint256 bandId,
-        string memory _uri,
-        uint256 idPartial
+        string memory _uri
     ) public returns (uint256) {
         require(_ownsArtist(artistId), "you do not own the specified artist");
-        require(_isBandMember(bandid, artistId), "you're not in the band");
+        require(_isBandMember(bandId, artistId), "you're not in the band");
         require(
             _hasMintedTrack(bandId, artistId),
             "artist already minted track"
         );
 
-        uint256 newTokenId = TRACK_PREFIX + idPartial;
+        _trackTokenIds.increment();
+        uint256 newTokenId = TRACK_PREFIX + _trackTokenIds.current();
         _mint(msg.sender, newTokenId, 1, "");
         MetadataUris[newTokenId] = _uri;
         allTrackTokens.push(newTokenId);
