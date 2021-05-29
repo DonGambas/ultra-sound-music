@@ -15,9 +15,12 @@ export class Controls extends React.Component {
 
   async connectToContract() {
     const contractAddress = '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512';
-    let contract = new ethers.Contract(contractAddress, ArtistAbi, metaMask.getProvider());
+  
+    const provider = metaMask.getProvider()
+    let contract = new ethers.Contract(contractAddress, ArtistAbi, provider);
+    let writeContract = new ethers.Contract(contractAddress, ArtistAbi, provider.getSigner());
     try {
-      await contract.createArtists();
+      await writeContract.createArtist();
     } catch (error) {
       alert(error);
     }
