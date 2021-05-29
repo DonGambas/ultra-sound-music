@@ -46,17 +46,25 @@ contract UltraSoundMusic is ERC1155 {
         return _artistTokenIds.current();
     }
 
+    //does the msg.sender own the artist token they are attesting to own
+
     function _ownsArtist(uint256 artistId) private returns (bool) {
         return balanceOf(msg.sender, artistId) > 0;
     }
+
+    //does the band have 4 members
 
     function _isBandMintable(uint256 bandId) private returns (bool) {
         return bandAttestations[bandId] == 4;
     }
 
+    // can the band currently be joined
+
     function _isBandJoinabble(uint256 bandId) private returns (bool) {
         return bandAttestation[bandId] > 0;
     }
+
+    // is an artist a member of the specified band
 
     function _isBandMember(uint256 bandId, address member)
         private
@@ -64,6 +72,8 @@ contract UltraSoundMusic is ERC1155 {
     {
         return bandMembers[bandId][member];
     }
+
+    // has a member of a band minted a track
 
     function _hasMintedTrack(uint256 bandId, address member)
         private
@@ -149,6 +159,8 @@ contract UltraSoundMusic is ERC1155 {
         allTrackTokens.push(newTokenId);
         return newTokenId;
     }
+
+    // @dev returns the URI for a requested tokenID
 
     function uri(uint256 _id)
         public
