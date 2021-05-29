@@ -1,15 +1,5 @@
 import * as ActionTypes from '../actionTypes';
-
 import * as metaMask from '../../utils/metaMask';
-
-export function showModal(id) {
-  return {
-    type: ActionTypes.SHOW_MODAL,
-    data: {
-      id,
-    },
-  };
-}
 
 export function connectToWallet() {
   metaMask.connectToMetaMask();
@@ -31,5 +21,26 @@ export function setEntities(entities) {
 export function installMetaMask() {
   return {
 
+  };
+}
+
+export function showModal({
+  title,
+  bodyText,
+  ctaText
+}) {
+  return {
+    type: ActionTypes.SHOW_MODAL,
+    data: {
+      title,
+      bodyText,
+      ctaText      
+    }
+  };
+}
+
+export function hideModal() {
+  return {
+    type: ActionTypes.HIDE_MODAL
   };
 }

@@ -7,7 +7,7 @@ import Search from './Search';
 import Entities from './Entities';
 
 export class Searchable extends React.Component {
-  propTypes = {
+  static propTypes = {
     entities: PropTypes.array
   };
 
