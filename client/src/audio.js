@@ -1,7 +1,10 @@
 import * as Tone from 'tone'
 
 const WALLET_ADDRESS = '0x963CFC0Bfb272BA9512621a677A31884c5c2A4DB' // Vijay's Metamask wallet
-const DEFAULT_BPM = 60
+const ACCOUNT_0 = '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266'
+const ACCOUNT_1 = '0x70997970c51812dc3a010c7d01b50e0d17dc79c8'
+
+const DEFAULT_BPM = 56
 const DEFAULT_SEQUENCE = ['*', '*', '*', '*']
 
 const casioKeys = new Tone.Players({
@@ -25,7 +28,7 @@ const salamanderKeys = new Tone.Sampler({
 		"F#4": "Fs4.mp3",
 		"A4": "A4.mp3",
 	},
-    volume: -5,
+    volume: -8,
 	release: 1,
 	baseUrl: "https://tonejs.github.io/audio/salamander/",
 }).toDestination();
@@ -44,7 +47,7 @@ const distortion = new Tone.Distortion({
 
 const snare = new Tone.Player({
     url: "https://tonejs.github.io/audio/drum-samples/CR78/snare.mp3",
-    volume: -20,
+    volume: -25,
     fadeOut: 0.1
 }).chain(distortion, drumCompress);
 
@@ -91,18 +94,18 @@ const bass = new Tone.FMSynth({
     },
 }).toDestination();
 const monoBass = new Tone.MonoSynth({
-    volume: -10,
+    volume: -16,
     envelope: {
-        attack: 0.1,
-        decay: 0.3,
-        release: 2,
+        attack: 0.01,
+        decay: 0.01,
+        release: 0.01,
     },
     filterEnvelope: {
         attack: 0.001,
         decay: 0.01,
-        sustain: 0.5,
+        sustain: 0.1,
         baseFrequency: 200,
-        octaves: 2.6
+        octaves: 1.6
     }
 }).toDestination();
 
@@ -326,27 +329,23 @@ export const generateAudioFromWallet = (address = WALLET_ADDRESS) => {
     */
 
     Tone.Transport.bpm.value = DEFAULT_BPM
-    Tone.Transport.start()
 }
 
 let isInitialized = false
-let isPlaying = false
-document.addEventListener('click', () => {
+export const togglePlayback = (nextPlayState) => {
+    console.log('togglePlayback', nextPlayState)
     if (!isInitialized) {
         Tone.start()
         generateAudioFromWallet()
         isInitialized = true
-        isPlaying = true
         console.log("context started")
-    } else {
-        if (isPlaying) {
-            console.log('STOP')
-            Tone.Transport.stop()
-            isPlaying = false
-        } else {
-            console.log('START')
-            Tone.Transport.start()
-            isPlaying = true
-        }
     }
-}, false);
+
+    if (!nextPlayState) {
+        console.log('STOP')
+        Tone.Transport.stop()
+    } else {
+        console.log('START')
+        Tone.Transport.start()
+    }
+}
