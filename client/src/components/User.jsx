@@ -4,6 +4,7 @@ import Col from 'react-bootstrap/Col';
 import MetaMaskButton from './MetaMaskButton';
 import { ethers } from 'ethers';  
 import Controls from './Controls';
+import Canvas from './Canvas';
 import * as metaMask from '../utils/metaMask';
 
 
@@ -71,11 +72,14 @@ export class User extends React.Component {
       );
     } 
 
+    let canvas = <Canvas address={this.state.accountId} />;
+
     return (
       <div className='User'>
         <Row>
           <Col>
             {userInfo}
+            {canvas}
             {content}
           </Col>
         </Row>
