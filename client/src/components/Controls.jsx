@@ -13,27 +13,28 @@ export class Controls extends React.Component {
     }
   }
 
-  async connectToContract() {
+  async createArtist() {
     const contractAddress = '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512';
   
     const provider = metaMask.getProvider()
     let contract = new ethers.Contract(contractAddress, ArtistAbi, provider);
     let writeContract = new ethers.Contract(contractAddress, ArtistAbi, provider.getSigner());
     try {
-      await writeContract.createArtist();
+      const fakeTokenId = `${Date.now()}`
+      await writeContract.createArtist(fakeTokenId);
     } catch (error) {
-      alert(error);
+      alert(JSON.stringify(error));
     }
   }
 
-  connectToContractOnClick() {
-    this.connectToContract();
+  onClickCreateArtist = () => {
+    this.createArtist();
   }
   
   render() {
     return (
       <div className="Controls">
-        <Button onClick={this.connectToContract}>Connect to Contract</Button>
+        <Button onClick={this.onClickCreateArtist}>Create Artist</Button>
         <Button if style={{ width: "250px", height: "40px", margin: "8px" }} onClick={() => {
           togglePlayback(this.state.nextPlayState)
           this.setState({ nextPlayState: !this.state.nextPlayState })
