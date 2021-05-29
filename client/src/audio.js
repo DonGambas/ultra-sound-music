@@ -270,7 +270,13 @@ const charsToBassInput = (charStr) => {
 };
 
 let lastAddress;
-export const generateAudioFromWallet = (address = WALLET_ADDRESS) => {
+let kickSeq, snareSeq, hihatSeq, keysSeq, bassSeq
+export const generateAudioFromWallet = (address) => {
+    if (!address || !address.length) {
+        console.log('NO ADDRESS GIVEN')
+        return
+    }
+
     lastAddress = address
 
     const splitArr = address.split('x');
@@ -280,7 +286,8 @@ export const generateAudioFromWallet = (address = WALLET_ADDRESS) => {
 
     const kickInput = charsToDrumInput(fortyChars.substring(0, 8));
     console.log('kickInput', kickInput);
-    const kickSeq = new Tone.Sequence((time, note) => {
+    if (kickSeq) kickSeq.dispose()
+    kickSeq = new Tone.Sequence((time, note) => {
         if (note === '*') {
             kick.triggerAttack('C1', time);
         }
@@ -290,7 +297,8 @@ export const generateAudioFromWallet = (address = WALLET_ADDRESS) => {
 
     const snareInput = charsToDrumInput(fortyChars.substring(8, 16));
     console.log('snareInput', snareInput);
-    const snareSeq = new Tone.Sequence((time, note) => {
+    if (snareSeq) snareSeq.dispose()
+    snareSeq = new Tone.Sequence((time, note) => {
         if (note === '*') {
             snare.start(time);
         }
@@ -298,7 +306,8 @@ export const generateAudioFromWallet = (address = WALLET_ADDRESS) => {
 
     const hihatInput = charsToDrumInput(fortyChars.substring(16, 24));
     console.log('hihatInput', hihatInput);
-    const hihatSeq = new Tone.Sequence((time, note) => {
+    if (hihatSeq) hihatSeq.dispose()
+    hihatSeq = new Tone.Sequence((time, note) => {
         if (note === '*') {
             hats.start(time);
         }
@@ -306,7 +315,8 @@ export const generateAudioFromWallet = (address = WALLET_ADDRESS) => {
 
     const keysInput = charsToKeysInput(fortyChars.substring(24, 32));
     console.log('keysInput', keysInput);
-    const keysSeq = new Tone.Sequence((time, note) => {
+    if (keysSeq) keysSeq.dispose()
+    keysSeq = new Tone.Sequence((time, note) => {
         if (note !== '') {
             console.log('time', time, note);
             salamanderKeys.triggerAttackRelease(note, '8n');
@@ -315,62 +325,64 @@ export const generateAudioFromWallet = (address = WALLET_ADDRESS) => {
 
     const bassInput = charsToBassInput(fortyChars.substring(32, 40));
     console.log('bassInput', bassInput);
-    const bassSeq = new Tone.Sequence((time, note) => {
+    if (bassSeq) bassSeq.dispose()
+    bassSeq = new Tone.Sequence((time, note) => {
         if (note !== '') {
             console.log('time', time, note);
             monoBass.triggerAttackRelease(note, '16n');
         }
     }, bassInput).start(0);
 
-    /*
-      const loop = new Tone.Loop((time) => {
-          // triggered every eighth note.
-          console.log(time)
-          casioKeys.player(0).start(time, 0, "16n");
-      }, "16n").start(0)
-      */
-
     Tone.Transport.bpm.value = DEFAULT_BPM;
-    //Tone.Transport.position = '0:0:0';
 };
 
 let isInitialized = false;
-export const togglePlayback = async (nextPlayState) => {
-    console.log('togglePlayback', nextPlayState);
+export const togglePlayback = async (address = DEFAULT_ADDRESS) => {
+    console.log('togglePlayback', address, isInitialized);
+
+    if (!address) {
+        console.log('NO ADDRESS GIVEN')
+        return false
+    }
+
     if (!isInitialized) {
         await Tone.start();
-        generateAudioFromWallet();
+        generateAudioFromWallet(address);
         isInitialized = true;
         console.log('context started');
     }
 
-    if (!nextPlayState) {
-        console.log('STOP');
-        Tone.Transport.stop();
-    } else {
-        console.log('START');
-        Tone.Transport.start();
+    Tone.Transport.toggle()
+
+    if (Tone.Transport.state === 'started') {
+        console.log('PLAYING')
+        return true
     }
+    console.log('STOPPED')
+    return false
 };
 
-export const downloadAudio = async () => {
-    console.log('downloadAudio', isInitialized);
+export const downloadAudio = async (address = DEFAULT_ADDRESS) => {
+    console.log('downloadAudio', address, isInitialized);
+
+    if (!address) {
+        console.log('NO ADDRESS GIVEN')
+        return false
+    }
+
     if (!isInitialized) {
         await Tone.start();
-        generateAudioFromWallet();
+        generateAudioFromWallet(address);
     }
 
     const recorder = new Tone.Recorder();
-    /// /Tone.getDestination().connect(recorder);
-    // salamanderKeys.disconnect(Tone.getDestination())
-    // salamanderKeys.connect(recorder)
     Tone.getDestination().connect(recorder);
     recorder.start();
     Tone.Transport.stop();
     Tone.Transport.start();
 
     setTimeout(async () => {
-        console.log('DOWNLOAD');
+        console.log('DOWNLOADING FILE');
         Tone.Transport.stop();
         // the recorded audio is returned as a blob
         const recording = await recorder.stop();
