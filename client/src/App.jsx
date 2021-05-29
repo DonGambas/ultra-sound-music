@@ -17,8 +17,7 @@ import CollectionNav from './components/CollectionNav';
 import About from './components/About';
 import User from './components/User';
 import NotConnectedModal from './components/NotConnectedModal';
-import MyCollection from './components/MyCollection';
-import Wild from './components/Wild';
+import Searchable from './components/Searchable';
 
 import './App.css';
 
@@ -26,7 +25,30 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 export class App extends React.Component {
   static propTypes = {
-    shoulShowModal: PropTypes.bool    
+    shoulShowModal: PropTypes.bool
+  }
+
+  state = {
+    myCollection: [],
+    wild: []
+  }
+
+  componentDidMount() {
+    fetch('/mockData/entities.json')
+      .then(response => response.json())
+      .then(jsonData => {
+        this.setState({
+          myCollection: jsonData
+        });
+      });
+
+    fetch('/mockData/entities.json')
+      .then(response => response.json())
+      .then(jsonData => {
+        this.setState({
+          wild: jsonData
+        });
+      });      
   }
 
   render() {
@@ -58,10 +80,10 @@ export class App extends React.Component {
                       <CollectionNav />
                       <Switch>
                         <Route path="/myCollection">
-                          <MyCollection />
+                          <Searchable entities={this.state.myCollection} />
                         </Route>
                         <Route path="/wild">
-                          <Wild />
+                          <Searchable entities={this.state.wild} />
                         </Route>
                       </Switch>
                     </Route>
