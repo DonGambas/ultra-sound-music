@@ -19,18 +19,18 @@ const casioKeys = new Tone.Players({
 }).toDestination()
 
 const salamanderKeys = new Tone.Sampler({
-	urls: {
-		"C1": "C1.mp3",
-		"C2": "C2.mp3",
-		"C3": "C3.mp3",
-		"C4": "C4.mp3",
-		"D#4": "Ds4.mp3",
-		"F#4": "Fs4.mp3",
-		"A4": "A4.mp3",
-	},
+    urls: {
+        "C1": "C1.mp3",
+        "C2": "C2.mp3",
+        "C3": "C3.mp3",
+        "C4": "C4.mp3",
+        "D#4": "Ds4.mp3",
+        "F#4": "Fs4.mp3",
+        "A4": "A4.mp3",
+    },
     volume: -8,
-	release: 1,
-	baseUrl: "https://tonejs.github.io/audio/salamander/",
+    release: 1,
+    baseUrl: "https://tonejs.github.io/audio/salamander/",
 }).toDestination();
 
 const drumCompress = new Tone.Compressor({
@@ -346,6 +346,36 @@ export const togglePlayback = (nextPlayState) => {
         Tone.Transport.stop()
     } else {
         console.log('START')
+        Tone.Transport.position = 0
         Tone.Transport.start()
     }
+}
+
+export const downloadAudio = () => {
+    console.log('downloadAudio', isInitialized)
+    Tone.start()
+
+    generateAudioFromWallet()
+
+    const recorder = new Tone.Recorder();
+    ////Tone.getDestination().connect(recorder);
+    //salamanderKeys.disconnect(Tone.getDestination())
+    //salamanderKeys.connect(recorder)
+    Tone.getDestination().connect(recorder)
+    recorder.start();
+    Tone.Transport.position = 0
+    Tone.Transport.start()
+
+    setTimeout(async () => {
+        console.log('DOWNLOAD')
+        Tone.Transport.stop()
+        // the recorded audio is returned as a blob
+        const recording = await recorder.stop();
+        // download the recording by creating an anchor element and blob url
+        const url = URL.createObjectURL(recording);
+        const anchor = document.createElement("a");
+        anchor.download = "myaudio.webm";
+        anchor.href = url;
+        anchor.click();
+    }, 3000);
 }
