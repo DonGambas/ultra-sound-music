@@ -33,7 +33,6 @@ let contract = new ethers.Contract(
 
 // connect to DB 
 
-var mongoDB = 'mongodb://localhost:27017';
 mongoose.connect(process.env.MONGO_DB, {useNewUrlParser: true, useUnifiedTopology: true}, () => mongoose.connection.db.dropDatabase());
 
 //Get the default connection
@@ -126,6 +125,10 @@ app.get('/cache/tracks', async (req, res) => {
   const tracks = await Track.find()
 	res.send(tracks)
 });
+
+app.post("/create_metadata_uri", async(req,res)=> {
+  res.send({metadataURI: "https://test.test"})
+})
 
 app.listen(port, async () => {
     // Connect to the network
