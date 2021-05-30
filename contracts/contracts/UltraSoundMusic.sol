@@ -122,12 +122,16 @@ contract UltraSoundMusic is ERC1155 {
      * @dev function to start a band, must provide artistId that you own, and partialId
      */
 
-    function startBand(uint256 artistId) public returns (uint256) {
+    function startBand(uint256 artistId, string memory _uri)
+        public
+        returns (uint256)
+    {
         require(_ownsArtist(artistId), "you do not own the specified artist");
         _bandTokenIds.increment();
         uint256 bandId = BAND_PREFIX + _bandTokenIds.current();
         require(!_isBandJoinable(bandId), "this band is already active");
         bandLeaders[bandId] = msg.sender;
+        MetadataUris[bandId] = _uri;
         bandAttestations[bandId] = 1;
         emit bandCreate(bandId, artistId, msg.sender);
         return bandId;

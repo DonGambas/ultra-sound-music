@@ -72,11 +72,14 @@ const handleArtistToken = async(from,to,id) =>{
 const handleBandToken = async(id, artistId, owner) =>{
     console.log("handling new band token")
     //const metadataUri = await contract.uri(id)
+    const metadataUri = await contract.uri(id) 
+    const metadata = await fetch(metadataUri).then(result => result.json())
     const band = new Band({
       tokenId: id,
       creator: artistId,
       owner,
-      //metadataUri
+      metadataUri,
+      metadata,
       members: [{artistId: Number(artistId), owner}],
       active: false,
       tokenType:"band"

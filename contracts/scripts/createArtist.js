@@ -14,7 +14,7 @@ async function main() {
   // Now you can call functions of the contract
     await contract.createArtist(testURI);
     const artistId = await contract.artistCount()
-    await contract.startBand(artistId)
+    await contract.startBand(artistId, testURI)
 
     
   } catch (error) {
