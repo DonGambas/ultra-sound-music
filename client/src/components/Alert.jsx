@@ -16,6 +16,9 @@ export class Alert extends React.Component {
   };
 
   onHide = () => {
+    if (this.props.title === 'Success!') {
+      window.location.reload();
+    }
     this.props.hideModal();
   }
 

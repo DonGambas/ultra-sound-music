@@ -46,7 +46,8 @@ export async function joinBand(artistId, bandId) {
 
 // Account addresses can have different casing
 export function areSameAccount(...accId) {
-  if (!accId[0]) {
+  const hasEmptyVal = (!accId) || accId.some(accountId => !accountId);
+  if (hasEmptyVal) {
     return false;
   }
   return accId.every(accountId => accountId.toLowerCase() === accId[0].toLowerCase());
