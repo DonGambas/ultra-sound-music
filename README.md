@@ -47,3 +47,17 @@ npm i
 
 npm run start
 ```
+
+endpoint
+
+```
+/cache/artists
+/cache/bands
+/cache/tracks
+/cache/tokens/all
+/create_metadata_uri
+```
+
+```
+
+```
