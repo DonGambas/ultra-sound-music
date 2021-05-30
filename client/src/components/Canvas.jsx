@@ -10,10 +10,9 @@ function hexToRgb(hex) {
     } : null;
 }
 
-function convertCanvasToImage() {
-    let canvas = document.getElementById("canvas");
+function convertCanvasToImage(canvasNode) {
     let image = new Image();
-    image.src = canvas.toDataURL();
+    image.src = canvasNode.toDataURL();
     return image;
   }
 
@@ -22,6 +21,8 @@ var iso;
 export class Canvas extends React.Component {
     constructor(props) {
         super(props)
+        this.containRef = React.createRef()
+        this.canvasRef = React.createRef()
     }
 
     componentDidUpdate() {
@@ -39,7 +40,7 @@ export class Canvas extends React.Component {
 
             console.log('Canvas', 'rgbArr', rgbArr);
 
-            iso = new Isomer(document.getElementById("canvas"));
+            iso = new Isomer(this.canvasRef.current);
             const cube = Isomer.Shape.Prism(Isomer.Point.ORIGIN).scale(Isomer.Point.ORIGIN, 2.5, 2.5, 0.3)
             let i = -1.2
             for (let color of rgbArr) {
@@ -48,8 +49,8 @@ export class Canvas extends React.Component {
                 i = i + 0.6
             }
 
-            const pngImage = convertCanvasToImage()
-            const container = document.getElementById('canvasContain')
+            const pngImage = convertCanvasToImage(this.canvasRef.current)
+            const container = this.containRef.current
             console.log('images', container.childNodes.length)
             if (container.childNodes.length > 1) {
                 container.replaceChild(pngImage, container.childNodes[1])
@@ -61,8 +62,8 @@ export class Canvas extends React.Component {
 
     render() {
         return (
-            <div id="canvasContain">
-                <canvas id="canvas" width="256" height="256" style={{ visibility: 'hidden', display: 'none' }} />
+            <div ref={this.containRef}>
+                <canvas ref={this.canvasRef} width="256" height="256" style={{ visibility: 'hidden', display: 'none' }} />
             </div>
         );
     }
