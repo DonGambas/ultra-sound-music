@@ -69,7 +69,7 @@ export class App extends React.Component {
                   <Switch>
                     <Route path="/about">
                       <About />
-                    </Route>                    
+                    </Route>
                     <Route path="/">
                       <User />
                       <CollectionNav />

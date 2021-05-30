@@ -30,21 +30,21 @@ export class User extends React.Component {
       isConnectedToAccount,
       chainId,
       accountId
-    })
+    });
 
     ethereum.on('chainChanged', (chainId) => {
       this.setState({
         isConnectedToNetwork: !!chainId,
         chainId
-      })
-    })
+      });
+    });
 
     ethereum.on('accountsChanged', (accounts, a, b) => {
       const accountId = accounts[0];
       this.setState({
         isConnectedToAccount: !!accountId,
         accountId
-      })
+      });
     });
   }
 
@@ -60,7 +60,7 @@ export class User extends React.Component {
     } else if (this.state.isConnectedToAccount) {
       content = <Controls accountId={this.state.accountId} />;
     } else {
-      content = <MetaMaskButton />
+      content = <MetaMaskButton />;
     }
 
     let userInfo;
