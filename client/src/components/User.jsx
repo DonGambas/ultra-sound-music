@@ -2,7 +2,6 @@ import React  from 'react';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import MetaMaskButton from './MetaMaskButton';
-import { ethers } from 'ethers';  
 import ArtistControls from './ArtistControls';
 import Controls from './Controls';
 import Canvas from './Canvas';
@@ -10,6 +9,7 @@ import * as metaMask from '../utils/metaMask';
 
 
 import './User.scss';
+import { debug } from 'tone';
 
 export class User extends React.Component {
   state = {
@@ -23,7 +23,7 @@ export class User extends React.Component {
     const chainId = await metaMask.getChainId();
     const accountId = await metaMask.getAccountId();
     const isConnectedToAccount = await metaMask.isConnectedToAccount();
-    const isConnectedToNetwork = metaMask.isConnectedToNetwork()
+    const isConnectedToNetwork = metaMask.isConnectedToNetwork();
 
     this.setState({
       isConnectedToNetwork,
@@ -39,7 +39,7 @@ export class User extends React.Component {
       });
     });
 
-    ethereum.on('accountsChanged', (accounts, a, b) => {
+    ethereum.on('accountsChanged', (accounts) => {
       const accountId = accounts[0];
       this.setState({
         isConnectedToAccount: !!accountId,
