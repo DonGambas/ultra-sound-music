@@ -1,3 +1,8 @@
+import { ethers } from 'ethers'
+import usmAbi from '../web3/usmAbi';
+import * as metaMask from '../utils/metaMask';
+
+const CONTRACT_ADDRESS = '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512';
 
 export function hasAlreadyMintedAnArtist(entities, currentAccountId) {
   return entities.some((entity) => {
@@ -28,5 +33,17 @@ export function entityIsOwned(entity, currentAccountId) {
 
 export function isMember(entity, currentAccountId) {
   // @todo not sure if owner is the right prop here
-  return entity.entityType = 'band' && entity.members.some((artist) => artist.owner === currentAccountId);
+  const a = entity.tokenType === 'band' && entity.members.some((artist) => {
+    const k = artist.owner === currentAccountId;
+    return k;
+  });
+
+  return a;
+}
+
+export async function joinBand(artistId, bandId) {
+  const provider = metaMask.getProvider();
+  const writeContract = new ethers.Contract(CONTRACT_ADDRESS, usmAbi, provider.getSigner());
+  debugger;
+  return writeContract.joinBand(artistId, bandId);
 }

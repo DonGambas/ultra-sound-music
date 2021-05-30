@@ -13,10 +13,12 @@ export class EntityCard extends React.Component {
     description: PropTypes.string,
     addresses: PropTypes.array,
     tokenType: PropTypes.string,
+    tokenId: PropTypes.number,
     isOwned: PropTypes.bool,
     isMember: PropTypes.bool,
     hasAlreadyPublishedTrack: PropTypes.bool,
-    numBandMembersNeeded: PropTypes.number
+    numBandMembersNeeded: PropTypes.number,
+    currentAccountArtistId: PropTypes.number
   };
 
   render() {
@@ -24,19 +26,23 @@ export class EntityCard extends React.Component {
       name,
       description,
       tokenType,
+      tokenId,
       isOwned,
       isMember,
       hasAlreadyPublishedTrack,
       numBandMembersNeeded,
+      currentAccountArtistId,
       addresses
     } = this.props;
 
     const buttonProps  = {
-      tokenType: tokenType,
+      tokenType,
+      tokenId,
       isOwned,
       isMember,
       hasAlreadyPublishedTrack,
-      numBandMembersNeeded
+      numBandMembersNeeded,
+      currentAccountArtistId
     };
 
     return (

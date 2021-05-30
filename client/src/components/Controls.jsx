@@ -4,6 +4,8 @@ import React from 'react';
 import { connect } from 'react-redux'; 
 import PropTypes from 'prop-types';
 import Button from 'react-bootstrap/Button';
+import InputGroup from 'react-bootstrap/InputGroup';
+import FormControl from 'react-bootstrap/FormControl';
 import { ethers } from 'ethers';
 import { togglePlayback } from '../audio'
 import * as Actions from '../redux/actions';
@@ -20,6 +22,8 @@ export class Controls extends React.Component {
  
   constructor(props) {
     super(props);
+    this.nameRef = React.createRef();
+    this.descriptionRef = React.createRef();
     this.state = {
       currentPlayState: false,
       currentTrackPlayState: false,
@@ -39,8 +43,8 @@ export class Controls extends React.Component {
     const writeContract = new ethers.Contract(contractAddress, usmAbi, provider.getSigner());
     try {
       const { data } = await api.createMetaDataUri({
-        name: 'bubsy',
-        description: 'bubsy\'s cooll token!',
+        name: this.nameRef.current.value,
+        description: this.descriptionRef.current.value,
         artistDNA: this.props.accountId
       });
       await writeContract.createArtist(data.metadataUri);
@@ -55,6 +59,20 @@ export class Controls extends React.Component {
   render() {
     return (
       <div className="Controls">
+        <InputGroup className="mb-3">
+          <FormControl
+            ref={this.nameRef}
+            placeholder="Name"
+            aria-label="Artist, Band, Track"
+            aria-describedby="basic-addon2"            
+          />
+          <FormControl
+            ref={this.descriptionRef}
+            placeholder="Description"
+            aria-label="Artist, Band, Track"
+            aria-describedby="basic-addon2"            
+          />          
+        </InputGroup>        
         <Button onClick={this.onClickCreateArtist}>Create Artist</Button>
         {
           <>

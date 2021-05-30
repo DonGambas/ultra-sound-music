@@ -25,6 +25,9 @@ export class Entities extends React.Component {
     if (!entities.length) {
       return;
     }
+    
+    const artists = entitiesUtils.getOwnedArtists(entities, currentAccountId);
+    const currentAccountArtistId = artists[0].tokenId;
 
     return entities.map((entity, index) => {
       let addresses;
@@ -48,10 +51,13 @@ export class Entities extends React.Component {
       const props  = {
         name,
         description,
+        tokenId: entity.tokenId,
         tokenType: entity.tokenType,
         isOwned: entitiesUtils.entityIsOwned(entity, currentAccountId),
+        isMember: entitiesUtils.isMember(entity, currentAccountId),
         hasAlreadyPublishedTrack: entitiesUtils.hasAlreadyPublishedTrack(entity, currentAccountId),
-        numBandMembersNeeded: entity.tokenType === 'band' && (4 - entity.members.length),        
+        numBandMembersNeeded: entity.tokenType === 'band' && (4 - entity.members.length),
+        currentAccountArtistId,
         addresses
       };
 
