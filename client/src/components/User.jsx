@@ -3,6 +3,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import MetaMaskButton from './MetaMaskButton';
 import { ethers } from 'ethers';  
+import ArtistControls from './ArtistControls';
 import Controls from './Controls';
 import Canvas from './Canvas';
 import * as metaMask from '../utils/metaMask';
@@ -29,21 +30,21 @@ export class User extends React.Component {
       isConnectedToAccount,
       chainId,
       accountId
-    })
+    });
 
     ethereum.on('chainChanged', (chainId) => {
       this.setState({
         isConnectedToNetwork: !!chainId,
         chainId
-      })
-    })
+      });
+    });
 
     ethereum.on('accountsChanged', (accounts, a, b) => {
       const accountId = accounts[0];
       this.setState({
         isConnectedToAccount: !!accountId,
         accountId
-      })
+      });
     });
   }
 
@@ -55,11 +56,11 @@ export class User extends React.Component {
     const hasAlreadyMinted = false;
     let content;
     if (hasAlreadyMinted) {
-      content = 'You\'ve already minted a token!!!'
+      content = <ArtistControls accountId={this.state.accountId} />;
     } else if (this.state.isConnectedToAccount) {
       content = <Controls accountId={this.state.accountId} />;
     } else {
-      content = <MetaMaskButton />
+      content = <MetaMaskButton />;
     }
 
     let userInfo;
