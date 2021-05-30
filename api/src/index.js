@@ -67,7 +67,8 @@ const handleArtistToken = async(from,to,id) =>{
       creator: to,
       owner: to,
       metadataUri,
-      metadata
+      metadata,
+      tokenType:"artist"
     })
     return artist.save()
   }
@@ -129,6 +130,15 @@ app.get('/cache/tracks', async (req, res) => {
   const tracks = await Track.find()
 	res.send(tracks)
 });
+
+app.get('/cache/tokens/all', async(req,res)=> {
+  const tracks = await Track.find()
+  const bands = await Band.find()
+  const artists = await Artist.find()
+
+  const merged = [].concat.apply([], [tracks,bands,artists]);
+  res.send(merged)
+})
 
 app.post("/create_metadata_uri", async(req,res)=> {
 
