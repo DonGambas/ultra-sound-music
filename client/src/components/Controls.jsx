@@ -1,3 +1,5 @@
+// @TODO - Check chainID, if mismatch, then show message
+
 import React from 'react';
 import { connect } from 'react-redux'; 
 import PropTypes from 'prop-types';
@@ -6,40 +8,46 @@ import { ethers } from 'ethers';
 import { togglePlayback, downloadAudio } from '../audio'
 import * as Actions from '../redux/actions';
 import * as metaMask from '../utils/metaMask';
-import ArtistAbi from '../web3/ArtistAbi';
+import usmAbi from '../web3/usmAbi';
+import * as api from '../api';
 
 export class Controls extends React.Component {
+  static propTypes = {
+    accountId: PropTypes.string
+  }
+ 
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
       currentPlayState: false,
       currentHexAddress: '',
-    }
+    };
   }
 
-  static propTypes = {
-    accountId: PropTypes.string
+  onClickCreateArtist = () => {
+    this.createArtist();
   }
 
   async createArtist() {
     const contractAddress = '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512';
 
-    const provider = metaMask.getProvider()
-    let contract = new ethers.Contract(contractAddress, ArtistAbi, provider);
-    let writeContract = new ethers.Contract(contractAddress, ArtistAbi, provider.getSigner());
+    const provider = metaMask.getProvider();
+    const contract = new ethers.Contract(contractAddress, usmAbi, provider);
+    const writeContract = new ethers.Contract(contractAddress, usmAbi, provider.getSigner());
     try {
-      const fakeTokenId = `${Date.now()}`
-      await writeContract.createArtist(fakeTokenId);
+      // const fakeTokenId = `${Date.now()}`;
+      const { data } = await api.createMetaDataUri({
+        name: 'bubsy',
+        description: 'bubsy\'s cooll token!',
+        artistDNA: this.props.accountId
+      });
+      await writeContract.createArtist(data.metadataUri);
     } catch (error) {
       this.props.showModal({
         title: 'Error',
         bodyText: JSON.stringify(error)
       });
     }
-  }
-
-  onClickCreateArtist = () => {
-    this.createArtist();
   }
 
   render() {
