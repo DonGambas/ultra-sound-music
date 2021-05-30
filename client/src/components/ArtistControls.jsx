@@ -42,9 +42,11 @@ export class ArtistControls extends React.Component {
       const ownedArtists = entitiesUtils.getOwnedArtists(this.props.entities, this.props.accountId);
       await writeContract.startBand(ownedArtists[0].tokenId, data.metadataUri);
     } catch (error) {
+      this.nameRef.current.value = '';
+      this.descriptionRef.current.value = '';
       this.props.showModal({
         title: 'Error',
-        bodyText: JSON.stringify(error)
+        bodyText: error
       });
     }
   }

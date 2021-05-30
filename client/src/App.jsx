@@ -30,7 +30,8 @@ export class App extends React.Component {
     isConnectedToNetwork: false,
     isConnectedToAccount: false,
     chainId: '',
-    accountId: ''
+    accountId: '',
+    transactionHash: 'x' // Hack for redrawing upon successful transaction
   }
 
   async componentDidMount() {
@@ -68,6 +69,23 @@ export class App extends React.Component {
     });    
   }
 
+  async componentDidUpdate(prevProps, prevState) {
+    if (prevState.transactionHash && (prevState.transactionHash !== this.state.transactionHash)) {
+      api.getAllEntities().then(({data}) => {
+        this.setState({
+          entities: data
+        });
+      });
+    }
+  }
+
+  updateTransactionHash = (tx) => {
+    const hash = tx && tx.hash
+    this.setState({
+      transactionHash: hash
+    });
+  }
+
   render() {
     const {
       entities,
@@ -75,9 +93,10 @@ export class App extends React.Component {
       isConnectedToAccount,
       chainId,
       accountId
-    } = this.state;
+    } = this.state; 
 
     const userProps = {
+      updateTransactionHash: this.updateTransactionHash,
       entities,
       isConnectedToNetwork,
       isConnectedToAccount,
@@ -114,10 +133,10 @@ export class App extends React.Component {
                       {/* <CollectionNav /> @todo - also get rid of the component */}
                       <Switch>
                         <Route path="/myCollection">
-                          <Searchable entities={this.state.entities} currentAccountId={this.state.accountId} onlyOwned={true} />
+                          <Searchable entities={this.state.entities} currentAccountId={this.state.accountId} onlyOwned={true} updateTransactionHash={this.updateTransactionHash}/>
                         </Route>
                         <Route path="/">
-                          <Searchable entities={this.state.entities} currentAccountId={this.state.accountId} />
+                          <Searchable entities={this.state.entities} currentAccountId={this.state.accountId} updateTransactionHash={this.updateTransactionHash} />
                         </Route>
                       </Switch>
                     </Route>

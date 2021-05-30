@@ -15,11 +15,18 @@ export default function modalReducer(state = initialState, action) {
 
   switch (type) {
     case ActionTypes.SHOW_MODAL: {
+      let body;
+      if (typeof data.bodyText === 'string') {
+        body = data.bodyText
+      } else {
+        body = JSON.stringify(data.bodyText);
+      }
+
       const newState = {
         ...state,
         shouldShowModal: true,
         modalTitle: data.title,
-        modalBodyText: data.bodyText,
+        modalBodyText: body,
         modalCTA: data.ctaText,
       };
 

@@ -18,7 +18,8 @@ export class EntityCard extends React.Component {
     isMember: PropTypes.bool,
     hasAlreadyPublishedTrack: PropTypes.bool,
     numBandMembersNeeded: PropTypes.number,
-    currentAccountArtistId: PropTypes.number
+    currentAccountArtistId: PropTypes.number,
+    updateTransactionHash: PropTypes.func
   };
 
   render() {
@@ -32,6 +33,7 @@ export class EntityCard extends React.Component {
       hasAlreadyPublishedTrack,
       numBandMembersNeeded,
       currentAccountArtistId,
+      updateTransactionHash,
       addresses
     } = this.props;
 
@@ -42,7 +44,9 @@ export class EntityCard extends React.Component {
       isMember,
       hasAlreadyPublishedTrack,
       numBandMembersNeeded,
-      currentAccountArtistId
+      currentAccountArtistId, 
+      tokenId,
+      updateTransactionHash
     };
 
     return (

@@ -10,7 +10,8 @@ export class Searchable extends React.Component {
   static propTypes = {
     onlyOwned: PropTypes.bool,
     currentAccountId: PropTypes.string,
-    entities: PropTypes.array
+    entities: PropTypes.array,
+    updateTransactionHash: PropTypes.func
   };
 
   state = {
@@ -47,7 +48,7 @@ export class Searchable extends React.Component {
     return (
       <div className="Searchable">
         <Search onChange={this.onChange} onClear={this.onClear} />
-        <Entities entities={entities} currentAccountId={this.props.currentAccountId} />
+        <Entities entities={entities} currentAccountId={this.props.currentAccountId} updateTransactionHash={this.props.updateTransactionHash}/>
       </div>      
     );
   }

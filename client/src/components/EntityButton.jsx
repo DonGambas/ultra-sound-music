@@ -2,11 +2,17 @@ import React from 'react';
 import { connect } from 'react-redux'; 
 import PropTypes from 'prop-types';
 import Button from 'react-bootstrap/Button';
+import InputGroup from 'react-bootstrap/InputGroup';
+import FormControl from 'react-bootstrap/FormControl';
+import Spinner from 'react-bootstrap/Spinner';
+import { ethers } from 'ethers'; 
+import usmAbi from '../web3/usmAbi';
+import * as metaMask from '../utils/metaMask';
+import * as api from '../api'
 import * as Actions from '../redux/actions';
 import * as entityUtils from '../utils/entities';
 
 import './EntityButton.scss';
-import { connectToMetaMask } from '../utils/metaMask';
 
 const MAX_BAND_MEMBERS = 4;
 
@@ -21,7 +27,8 @@ export class EntityButton extends React.Component {
     isMember: PropTypes.bool,
     hasAlreadyPublishedTrack: PropTypes.bool,
     numBandMembersNeeded: PropTypes.number,
-    showModal: PropTypes.func
+    showModal: PropTypes.func,
+    updateTransactionHash: PropTypes.func
   };
 
   constructor(props) {
@@ -30,11 +37,21 @@ export class EntityButton extends React.Component {
     this.descriptionRef = React.createRef();
   }
 
+  state = {
+    isProcessing: false
+  }
+
   onClickJoinBand = () => {
+    this.setState({
+      isProcessing: true
+    });    
     this.joinBand();
   }
 
   onClickPublishTrack = () => {
+    this.setState({
+      isProcessing: true
+    });    
     this.publishTrack();
   }
 
@@ -45,11 +62,20 @@ export class EntityButton extends React.Component {
 
     // @todo need artistId - however, the current account can have multiple artists to join from
     try {
-      await entityUtils.joinBand(currentAccountArtistId, tokenId);    
+      const tx = await entityUtils.joinBand(currentAccountArtistId, tokenId);    
+      this.props.updateTransactionHash(tx);
+      this.props.showModal({
+        title: 'Success!',
+        bodyText: `You have joined the band!`
+      });       
     } catch (error) {
       this.props.showModal({
         title: 'Error',
-        bodyText: JSON.stringify(error)
+        bodyText: error
+      });
+    } finally {
+      this.setState({
+        isProcessing: false
       });
     }
     
@@ -66,13 +92,22 @@ export class EntityButton extends React.Component {
         name: this.nameRef.current.value,
         description: this.descriptionRef.current.value
       });
-      await writeContract.createTrack(data.metadataUri);
+      const tx = await writeContract.createTrack(this.props.currentAccountArtistId, this.props.tokenId, data.metadataUri);
+      this.props.updateTransactionHash(tx);
+      this.props.showModal({
+        title: 'Success!',
+        bodyText: `You just published your track: ${this.nameRef.current.value}!`
+      });          
     } catch (error) {
       this.props.showModal({
         title: 'Error',
-        bodyText: JSON.stringify(error)
+        bodyText: error
       });
-    }    
+    } finally {
+      this.setState({
+        isProcessing: false
+      });
+    }
   }
 
   render() {
@@ -87,13 +122,27 @@ export class EntityButton extends React.Component {
     let isDisabled = false;
     let onClick = null;
     let buttons = null;
-    if (this.props.tokenType === 'track') {
+
+    if (this.state.isProcessing) {
+      ctaText = (
+        <Button onClick={this.onClickCreateArtist}>
+          <Spinner
+            as="span"
+            animation="border"
+            size="sm"
+            role="status"
+            aria-hidden="true"
+          />
+          <span className="sr-only">Processing...</span>
+        </Button>          
+      );
+    } else if (this.props.tokenType === 'track') {
       ctaText = 'Play';
     } else if (tokenType === 'band') {
       if (false && hasAlreadyPublishedTrack) {
         ctaText = 'Already published track';
         isDisabled = true;
-      } else if (isMember && numBandMembersNeeded >= MAX_BAND_MEMBERS) {
+      } else if (isMember && numBandMembersNeeded === 0) {
         buttons = (
           <InputGroup className="mb-3">
             <FormControl
@@ -112,7 +161,7 @@ export class EntityButton extends React.Component {
         )
         onClick = this.onClickPublishTrack;
         ctaText = 'Publish track';
-      } else if (isMember && numBandMembersNeeded < MAX_BAND_MEMBERS) {
+      } else if (isMember && numBandMembersNeeded) {
         ctaText = `Waiting for ${numBandMembersNeeded} to join`;
         isDisabled = true;
       } else {
@@ -134,7 +183,7 @@ export class EntityButton extends React.Component {
     return (
       <div>
         {buttons}
-        <Button {...props}>{ctaText} </Button>
+        <Button {...props}>{ctaText}</Button>
       </div>
     );
   }

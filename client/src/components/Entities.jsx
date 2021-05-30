@@ -9,7 +9,8 @@ import './Entities.scss';
 export class Entities extends React.Component {
   static propTypes = {
     entities: PropTypes.array,
-    currentAccountId: PropTypes.string
+    currentAccountId: PropTypes.string,
+    updateTransactionHash: PropTypes.func
   }
 
   static defaultProps = {
@@ -19,7 +20,8 @@ export class Entities extends React.Component {
   renderEntities = () => {
     const {
       entities,
-      currentAccountId
+      currentAccountId,
+      updateTransactionHash
     } = this.props;
 
     if (!entities.length) {
@@ -27,7 +29,7 @@ export class Entities extends React.Component {
     }
     
     const artists = entitiesUtils.getOwnedArtists(entities, currentAccountId);
-    const currentAccountArtistId = artists[0].tokenId;
+    const currentAccountArtistId = Array.isArray(artists) && artists[0] && artists[0].tokenId;
 
     return entities.map((entity, index) => {
       let addresses;
@@ -58,6 +60,7 @@ export class Entities extends React.Component {
         hasAlreadyPublishedTrack: entitiesUtils.hasAlreadyPublishedTrack(entity, currentAccountId),
         numBandMembersNeeded: entity.tokenType === 'band' && (4 - entity.members.length),
         currentAccountArtistId,
+        updateTransactionHash,
         addresses
       };
 

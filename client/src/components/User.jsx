@@ -13,6 +13,7 @@ import { debug } from 'tone';
 
 export class User extends React.Component {
   static propTypes = {
+    updateTransactionHash: PropTypes.func,
     entities: PropTypes.array,
     isConnectedToNetwork: PropTypes.bool,
     isConnectedToAccount: PropTypes.bool,
@@ -41,19 +42,19 @@ export class User extends React.Component {
       accountId,
       chainId,
       isConnectedToAccount,
-      isConnectedToNetwork
+      isConnectedToNetwork,
+      updateTransactionHash
     } = this.props;
 
     const hasAlreadyMintedAnArtist = entitiesUtils.hasAlreadyMintedAnArtist(entities, accountId);
     const hasAlreadyMintedABand = entitiesUtils.hasAlreadyMintedABand(entities, accountId);
-  
     let content;
     if (hasAlreadyMintedABand) {
       content = 'Now Just Publish Some Tracks';
     } else if (hasAlreadyMintedAnArtist) {
       content = <ArtistControls accountId={accountId} entities={entities} />;
     } else if (isConnectedToAccount) {
-      content = <Controls accountId={accountId} />;
+      content = <Controls accountId={accountId} updateTransactionHash={updateTransactionHash} />;
     } else {
       content = <MetaMaskButton />;
     }
