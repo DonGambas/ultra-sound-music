@@ -17,6 +17,16 @@ task("accounts", "Prints the list of accounts", async () => {
  * @type import('hardhat/config').HardhatUserConfig
  */
 module.exports = {
+
+  networks:{
+    hardhat:{
+
+    },
+    rinkeby: {
+      url: "https://eth-mainnet.alchemyapi.io/v2/123abc123abc123abc123abc123abcde",
+      //accounts: [privateKey1, privateKey2, ...]
+    }
+  },
   // can add network config here
   solidity: "0.8.0",
 };

@@ -21,12 +21,14 @@ contract UltraSoundMusic is ERC1155 {
     uint256[] internal allBandTokens;
     uint256[] internal allTrackTokens;
 
+    mapping(address => bool) private hasMintedArtist;
+
     mapping(uint256 => string) public MetadataUris;
 
     //if band has sufficient members can be minted
     mapping(uint256 => uint256) private bandAttestations;
 
-    //bandd members
+    //band members
     mapping(uint256 => mapping(uint256 => bool)) private bandMembers;
 
     // who is the leadder of the band
@@ -103,11 +105,16 @@ contract UltraSoundMusic is ERC1155 {
             _artistTokenIds.current() < ARTIST_CAP,
             "Max artist supply reached"
         );
+        require(
+            !hasMintedArtist[msg.sender],
+            "adddress has already minted an artist"
+        );
         _artistTokenIds.increment();
         uint256 newTokenId = _artistTokenIds.current();
         _mint(msg.sender, newTokenId, 1, "");
         MetadataUris[newTokenId] = _uri;
         allArtistTokens.push(newTokenId);
+        hasMintedArtist[msg.sender] = true;
         return newTokenId;
     }
 
