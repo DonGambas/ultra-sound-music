@@ -16,3 +16,10 @@ export async function createMetaDataUri({
     headers: {"Access-Control-Allow-Origin": "*"}
   });
 }
+
+
+export async function getAllEntities() {
+  return axios.get(`${apiDomain}/cache/tokens/all`, {
+    headers: {"Access-Control-Allow-Origin": "*"}
+  });
+}

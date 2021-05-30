@@ -1,17 +1,23 @@
 import React  from 'react';
+import PropTypes from 'prop-types';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import MetaMaskButton from './MetaMaskButton';
-import { ethers } from 'ethers';  
 import ArtistControls from './ArtistControls';
 import Controls from './Controls';
 import Canvas from './Canvas';
+import * as entitiesUtils from '../utils/entities';
 import * as metaMask from '../utils/metaMask';
 
 
 import './User.scss';
+import { debug } from 'tone';
 
 export class User extends React.Component {
+  static propTypes = {
+    entities: PropTypes.array 
+  }
+
   state = {
     isConnectedToNetwork: false,
     isConnectedToAccount: false,
@@ -23,7 +29,7 @@ export class User extends React.Component {
     const chainId = await metaMask.getChainId();
     const accountId = await metaMask.getAccountId();
     const isConnectedToAccount = await metaMask.isConnectedToAccount();
-    const isConnectedToNetwork = metaMask.isConnectedToNetwork()
+    const isConnectedToNetwork = metaMask.isConnectedToNetwork();
 
     this.setState({
       isConnectedToNetwork,
@@ -39,7 +45,7 @@ export class User extends React.Component {
       });
     });
 
-    ethereum.on('accountsChanged', (accounts, a, b) => {
+    ethereum.on('accountsChanged', (accounts) => {
       const accountId = accounts[0];
       this.setState({
         isConnectedToAccount: !!accountId,
@@ -53,10 +59,14 @@ export class User extends React.Component {
   }
 
   render() {
-    const hasAlreadyMinted = false;
+    const hasAlreadyMintedAnArtist = entitiesUtils.hasAlreadyMintedAnArtist(this.props.entities, this.state.accountId);
+    const hasAlreadyMintedABand = entitiesUtils.hasAlreadyMintedABand(this.props.entities, this.state.accountId);
+  
     let content;
-    if (hasAlreadyMinted) {
-      content = <ArtistControls accountId={this.state.accountId} />;
+    if (hasAlreadyMintedABand) {
+      content = 'Now Just Publish Some Tracks';
+    } else if (hasAlreadyMintedAnArtist) {
+      content = <ArtistControls accountId={this.state.accountId} entities={this.props.entities} />;
     } else if (this.state.isConnectedToAccount) {
       content = <Controls accountId={this.state.accountId} />;
     } else {

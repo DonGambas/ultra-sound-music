@@ -17,6 +17,7 @@ import About from './components/About';
 import User from './components/User';
 import Alert from './components/Alert';
 import Searchable from './components/Searchable';
+import * as api from './api';
 
 import './App.css';
 
@@ -24,26 +25,15 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 export class App extends React.Component {
   state = {
-    myCollection: [],
-    wild: []
+    entities: []
   }
 
   componentDidMount() {
-    fetch('/mockData/entities.json')
-      .then((response) => response.json())
-      .then((jsonData) => {
-        this.setState({
-          myCollection: jsonData
-        });
+    api.getAllEntities().then(({ data }) => {
+      this.setState({
+        entities: data
       });
-
-    fetch('/mockData/entities.json')
-      .then((response) => response.json())
-      .then((jsonData) => {
-        this.setState({
-          wild: jsonData
-        });
-      });
+    });
   }
 
   render() {
@@ -71,13 +61,13 @@ export class App extends React.Component {
                       <About />
                     </Route>
                     <Route path="/">
-                      <User />
+                      <User entities={this.state.entities} />
                       <CollectionNav />
                       <Switch>
                         <Route path="/myCollection">
                           <Searchable entities={this.state.myCollection} />
                         </Route>
-                        <Route path="/wild">
+                        <Route path="/">
                           <Searchable entities={this.state.wild} />
                         </Route>
                       </Switch>

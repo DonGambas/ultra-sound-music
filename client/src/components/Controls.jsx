@@ -5,11 +5,13 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Button from 'react-bootstrap/Button';
 import { ethers } from 'ethers';
-import { togglePlayback, downloadAudio } from '../audio'
+import { togglePlayback, downloadAudio, toggleTrackAudioPlayback } from '../audio'
 import * as Actions from '../redux/actions';
 import * as metaMask from '../utils/metaMask';
 import usmAbi from '../web3/usmAbi';
 import * as api from '../api';
+
+const BUTTON_WIDTH = "110px"
 
 export class Controls extends React.Component {
   static propTypes = {
@@ -20,6 +22,7 @@ export class Controls extends React.Component {
     super(props);
     this.state = {
       currentPlayState: false,
+      currentTrackPlayState: false,
       currentHexAddress: '',
     };
   }
@@ -32,7 +35,7 @@ export class Controls extends React.Component {
     const contractAddress = '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512';
 
     const provider = metaMask.getProvider();
-    const contract = new ethers.Contract(contractAddress, usmAbi, provider);
+    // const contract = new ethers.Contract(contractAddress, usmAbi, provider);
     const writeContract = new ethers.Contract(contractAddress, usmAbi, provider.getSigner());
     try {
       // const fakeTokenId = `${Date.now()}`;
@@ -56,12 +59,15 @@ export class Controls extends React.Component {
         <Button onClick={this.onClickCreateArtist}>Create Artist</Button>
         {
           <>
-            <Button style={{ width: "250px", height: "40px", margin: "8px" }} onClick={async () => {
+            <Button style={{ width: BUTTON_WIDTH, height: "40px", margin: "8px" }} onClick={async () => {
               this.setState({ currentPlayState: await togglePlayback(this.props.accountId) })
-            }}>{this.state.currentPlayState ? 'Stop Audio' : 'Play Audio'}</Button>
-            <Button style={{ width: "250px", height: "40px", margin: "8px" }} onClick={async () => {
+            }}>{this.state.currentPlayState ? 'Stop Artist' : 'Play Artist'}</Button>
+            <Button style={{ width: BUTTON_WIDTH, height: "40px", margin: "8px" }} onClick={async () => {
               downloadAudio(this.props.accountId)
-            }}>Download Audio</Button>
+            }}>Save Audio</Button>
+            <Button style={{ width: BUTTON_WIDTH, height: "40px", margin: "8px" }} onClick={async () => {
+              this.setState({ currentTrackPlayState: await toggleTrackAudioPlayback() })
+            }}>{this.state.currentTrackPlayState ? 'Stop Track' : 'Play Track'}</Button>
           </>
         }
       </div>
