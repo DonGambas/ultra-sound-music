@@ -1,7 +1,8 @@
-import React  from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import { debug } from 'tone';
 import MetaMaskButton from './MetaMaskButton';
 import ArtistControls from './ArtistControls';
 import Controls from './Controls';
@@ -9,7 +10,6 @@ import Canvas from './Canvas';
 import * as entitiesUtils from '../utils/entities';
 
 import './User.scss';
-import { debug } from 'tone';
 
 export class User extends React.Component {
   static propTypes = {
@@ -18,14 +18,14 @@ export class User extends React.Component {
     isConnectedToNetwork: PropTypes.bool,
     isConnectedToAccount: PropTypes.bool,
     chainId: PropTypes.string,
-    accountId: PropTypes.string   
+    accountId: PropTypes.string
   }
 
   static defaultProps = {
     isConnectedToNetwork: false,
     isConnectedToAccount: false,
     chainId: '',
-    accountId: ''    
+    accountId: ''
   }
 
   async componentDidMount() {
@@ -63,19 +63,19 @@ export class User extends React.Component {
     if (isConnectedToNetwork) {
       userInfo = (
         <div>
-            <p>{`Chain Id: ${chainId}`}</p>
-            <p>{`Active wallet: ${accountId}`}</p> 
+          <p>{`Chain Id: ${chainId}`}</p>
+          <p>{`Active wallet: ${accountId}`}</p>
         </div>
       );
-    } 
+    }
 
-    let canvas = <Canvas addresses={[accountId]} />;
+    const canvas = <Canvas addresses={[accountId]} />;
 
     return (
-      <div className='User'>
+      <div className="User">
         <Row>
           <Col>
-            {userInfo}
+            {/* userInfo */}
             {canvas}
             {content}
           </Col>
