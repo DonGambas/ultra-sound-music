@@ -47,11 +47,6 @@ export class Searchable extends React.Component {
     return (
       <div className="Searchable">
         <Search onChange={this.onChange} onClear={this.onClear} />
-        <Navbar bg="light" expand="lg">
-          <Nav.Link>Artists</Nav.Link>
-          <Nav.Link>Bands</Nav.Link>
-          <Nav.Link>Tracks</Nav.Link>
-        </Navbar>
         <Entities entities={entities} currentAccountId={this.props.currentAccountId} />
       </div>      
     );
