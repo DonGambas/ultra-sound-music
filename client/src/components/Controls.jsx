@@ -35,7 +35,7 @@ export class Controls extends React.Component {
     const contractAddress = '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512';
 
     const provider = metaMask.getProvider();
-    const contract = new ethers.Contract(contractAddress, usmAbi, provider);
+    // const contract = new ethers.Contract(contractAddress, usmAbi, provider);
     const writeContract = new ethers.Contract(contractAddress, usmAbi, provider.getSigner());
     try {
       // const fakeTokenId = `${Date.now()}`;

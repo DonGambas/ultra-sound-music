@@ -61,7 +61,7 @@ export class App extends React.Component {
                       <About />
                     </Route>
                     <Route path="/">
-                      <User />
+                      <User entities={this.state.entities} />
                       <CollectionNav />
                       <Switch>
                         <Route path="/myCollection">

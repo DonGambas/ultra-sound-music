@@ -5,11 +5,14 @@ import Button from 'react-bootstrap/Button';
 import { ethers } from 'ethers';
 import * as Actions from '../redux/actions'
 import usmAbi from '../web3/usmAbi';
+import * as entitiesUtils from '../utils/entities';
 import * as metaMask from '../utils/metaMask';
 
 export class ArtistControls extends React.Component {
   static propTypes = {
-    showModal: PropTypes.func 
+    accountId: PropTypes.string,
+    entities: PropTypes.array,
+    showModal: PropTypes.func
   }
 
   onClickCreateBand = () => {
@@ -23,9 +26,8 @@ export class ArtistControls extends React.Component {
     const contract = new ethers.Contract(contractAddress, usmAbi, provider);
     const writeContract = new ethers.Contract(contractAddress, usmAbi, provider.getSigner());
     try {
-      // const fakeArtistId = `${Date.now()}`;
-      // const myAccountId = this.props.accountId;
-      await writeContract.startBand(3);
+      const ownedArtists = entitiesUtils.getOwnedArtists(this.props.entities, this.props.accountId);
+      await writeContract.startBand(ownedArtists[0].tokenId);
     } catch (error) {
       this.props.showModal({
         title: 'Error',

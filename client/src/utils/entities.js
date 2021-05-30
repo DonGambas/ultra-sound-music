@@ -1,11 +1,18 @@
-function isArtist(entity) {
-  
+
+export function hasAlreadyMintedAnArtist(entities, currentAccountId) {
+  return entities.some((entity) => {
+    return entity.tokenType === 'artist' && entity.metadata && entity.metadata.artistDNA === currentAccountId;
+  });
 }
 
-function isBand() {
-
+export function hasAlreadyMintedABand(entities, currentAccountId) {
+  return entities.some((entity) => {
+    return entity.tokenType === 'band' && entity.owner === currentAccountId;
+  });
 }
 
-function isTrack() {
-
+export function getOwnedArtists(entities, currentAccountId) {
+  return entities.filter((entity) => {
+    return entity.tokenType === 'artist' && entity.owner === currentAccountId;
+  })
 }
