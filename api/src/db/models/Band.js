@@ -7,7 +7,9 @@ const schema = mongoose.Schema({
   metadataUri: String,
   members: Array,
   active: Boolean,
-  tokenType: String
+  tokenType: String,
+  metadata: mongoose.Schema.Types.Mixed
+
 })
 
 module.exports = mongoose.model("Band", schema)

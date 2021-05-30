@@ -11,7 +11,7 @@ async function main() {
     const contract = await UltraSoundMusic.attach(deployedAddress);
   
   // Now you can call functions of the contract
-    await contract.joinBand(8, 111);
+    await contract.joinBand(5, 104);
     
     
   } catch (error) {

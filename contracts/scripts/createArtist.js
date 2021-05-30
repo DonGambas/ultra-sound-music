@@ -2,7 +2,7 @@
 const hre = require("hardhat");
 
 const deployedAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
-const testURI= "http://ipfs.io/ipfs/test"
+const testURI= "https://storageapi.fleek.co/dongambas-team-bucket/1622333162829"
 
 async function main() {
 
@@ -15,6 +15,7 @@ async function main() {
     await contract.createArtist(testURI);
     const artistId = await contract.artistCount()
     await contract.startBand(artistId)
+
     
   } catch (error) {
     console.log(error)

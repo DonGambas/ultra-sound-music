@@ -6,6 +6,7 @@ const schema = mongoose.Schema({
 	owner: String,
   metadataUri: String,
   tokenType: String,
+  metadata: mongoose.Schema.Types.Mixed
 })
 
 module.exports = mongoose.model("Artist", schema)

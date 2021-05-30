@@ -8,6 +8,7 @@ const Artist = require("./db/models/Artist") // new
 const Track = require("./db/models/Track")
 const Band = require ("./db/models/Band")
 const fleekStorage = require('@fleekhq/fleek-storage-js')
+const fetch = require('node-fetch');
 
 
 const Network = require( './contracts/network.json');
@@ -59,12 +60,14 @@ const handleArtistToken = async(from,to,id) =>{
   console.log("handle artist being called")
   if(from === nullAddress){
     console.log("handling new artist token")
-    const metadataUri = await contract.uri(id)
+    const metadataUri = await contract.uri(id) 
+    const metadata = await fetch(metadataUri).then(result => result.json())
     const artist = new Artist({
       tokenId: id,
       creator: to,
       owner: to,
-      metadataUri
+      metadataUri,
+      metadata
     })
     return artist.save()
   }
@@ -99,6 +102,7 @@ const handleJoinBand = async(id, artistId, owner) =>{
 const handleTrackToken = async(trackId, bandId, artistId, owner) =>{
   console.log("handling new Track")
     const metadataUri = await contract.uri(trackId)
+    const metadata = await fetch(metadataUri).then(result => result.json())
     const track = new Track({
       tokenId: trackId,
       creator: artistId,
@@ -106,7 +110,7 @@ const handleTrackToken = async(trackId, bandId, artistId, owner) =>{
       metadataUri,
       band: bandId,
       tokenType:"track",
-
+      metadata
     })
     return track.save()
 }
