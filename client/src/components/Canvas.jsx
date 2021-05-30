@@ -50,7 +50,12 @@ export class Canvas extends React.Component {
 
             const pngImage = convertCanvasToImage()
             const container = document.getElementById('canvasContain')
-            container.appendChild(pngImage)
+            console.log('images', container.childNodes.length)
+            if (container.childNodes.length > 1) {
+                container.replaceChild(pngImage, container.childNodes[1])
+            } else {
+                container.appendChild(pngImage)
+            }
         }
     }
 
