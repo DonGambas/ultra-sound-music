@@ -7,6 +7,7 @@ import FormControl from 'react-bootstrap/FormControl';
 import Spinner from 'react-bootstrap/Spinner';
 import { ethers } from 'ethers'; 
 import usmAbi from '../web3/usmAbi';
+import { togglePlayback } from '../audio'
 import * as metaMask from '../utils/metaMask';
 import * as api from '../api'
 import * as Actions from '../redux/actions';
@@ -28,7 +29,8 @@ export class EntityButton extends React.Component {
     hasAlreadyPublishedTrack: PropTypes.bool,
     numBandMembersNeeded: PropTypes.number,
     showModal: PropTypes.func,
-    updateTransactionHash: PropTypes.func
+    updateTransactionHash: PropTypes.func,
+    addresses: PropTypes.array
   };
 
   constructor(props) {
@@ -38,7 +40,8 @@ export class EntityButton extends React.Component {
   }
 
   state = {
-    isProcessing: false
+    isProcessing: false,
+    currentPlayState: false    
   }
 
   onClickJoinBand = () => {
@@ -137,7 +140,10 @@ export class EntityButton extends React.Component {
         </Button>          
       );
     } else if (this.props.tokenType === 'track') {
-      ctaText = 'Play';
+      ctaText = this.state.currentPlayState ? 'Stop' : 'Play';
+      onClick= async () => {
+        this.setState({currentPlayState: await togglePlayback(this.props.addresses) })
+      };
     } else if (tokenType === 'band') {
       if (false && hasAlreadyPublishedTrack) {
         ctaText = 'Already published track';

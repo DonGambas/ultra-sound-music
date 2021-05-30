@@ -46,7 +46,8 @@ export class EntityCard extends React.Component {
       numBandMembersNeeded,
       currentAccountArtistId, 
       tokenId,
-      updateTransactionHash
+      updateTransactionHash,
+      addresses
     };
 
     return (
