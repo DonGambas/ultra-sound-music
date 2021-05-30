@@ -5,7 +5,7 @@ import {
   Switch,
   Route,
   Link
-} from "react-router-dom";
+} from 'react-router-dom';
 import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
@@ -30,20 +30,20 @@ export class App extends React.Component {
 
   componentDidMount() {
     fetch('/mockData/entities.json')
-      .then(response => response.json())
-      .then(jsonData => {
+      .then((response) => response.json())
+      .then((jsonData) => {
         this.setState({
           myCollection: jsonData
         });
       });
 
     fetch('/mockData/entities.json')
-      .then(response => response.json())
-      .then(jsonData => {
+      .then((response) => response.json())
+      .then((jsonData) => {
         this.setState({
           wild: jsonData
         });
-      });      
+      });
   }
 
   render() {
@@ -53,7 +53,7 @@ export class App extends React.Component {
           <div className="App">
             <Container>
               <Navbar bg="light" expand="lg">
-                <Navbar.Brand><Link to="/">🤘 Ultra Sound Music Project</Link></Navbar.Brand>
+                <Navbar.Brand><Link to="/">🦇 🔉 🎼 Ultra Sound Music Project</Link></Navbar.Brand>
                 <Nav className="mr-auto">
                   <Nav.Link href="/about">About</Nav.Link>
                 </Nav>
@@ -82,17 +82,16 @@ export class App extends React.Component {
                         </Route>
                       </Switch>
                     </Route>
-                  </Switch>            
+                  </Switch>
                 </Col>
-              </Row>   
+              </Row>
             </Container>
           </div>
         </Router>
-        <Alert /> 
+        <Alert />
       </div>
-    );    
+    );
   }
 }
 
 export default App;
-
