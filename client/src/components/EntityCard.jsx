@@ -26,7 +26,7 @@ export class EntityCard extends React.Component {
       <Card className='EntityCard'>
         <Card.Img variant="top" src="holder.js/100px180" />
         <Card.Body>
-          <Card.Title>name</Card.Title>
+          <Card.Title>{name}</Card.Title>
           <Card.Text>{description}</Card.Text>
           <EntityButton {...buttonProps} />
         </Card.Body>

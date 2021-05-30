@@ -16,14 +16,6 @@ export class MyCollection extends React.Component {
     entities: []
   }
 
-  componentDidMount() {
-    fetch('/mockData/entities.json')
-      .then(response => response.json())
-      .then(jsonData => {
-        this.setEntities(jsonData)
-      });
-  }
-
   setEntities(entities) {
     this.setState({
       entities

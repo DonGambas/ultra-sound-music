@@ -18,6 +18,7 @@ import User from './components/User';
 import Alert from './components/Alert';
 import Searchable from './components/Searchable';
 import * as api from './api';
+import * as metaMask from './utils/metaMask';
 
 import './App.css';
 
@@ -25,18 +26,65 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 export class App extends React.Component {
   state = {
-    entities: []
+    entities: [],
+    isConnectedToNetwork: false,
+    isConnectedToAccount: false,
+    chainId: '',
+    accountId: ''
   }
 
-  componentDidMount() {
-    api.getAllEntities().then(({ data }) => {
+  async componentDidMount() {
+    const chainId = await metaMask.getChainId();
+    const accountId = await metaMask.getAccountId();
+    const isConnectedToAccount = await metaMask.isConnectedToAccount();
+    const isConnectedToNetwork = metaMask.isConnectedToNetwork();
+
+    this.setState({
+      isConnectedToNetwork,
+      isConnectedToAccount,
+      chainId,
+      accountId
+    });    
+
+    api.getAllEntities().then(({data}) => {
       this.setState({
         entities: data
       });
     });
+
+    ethereum.on('chainChanged', (chainId) => {
+      this.setState({
+        isConnectedToNetwork: !!chainId,
+        chainId
+      });
+    });
+
+    ethereum.on('accountsChanged', (accounts) => {
+      const accountId = accounts[0];
+      this.setState({
+        isConnectedToAccount: !!accountId,
+        accountId
+      });
+    });    
   }
 
   render() {
+    const {
+      entities,
+      isConnectedToNetwork,
+      isConnectedToAccount,
+      chainId,
+      accountId
+    } = this.state;
+
+    const userProps = {
+      entities,
+      isConnectedToNetwork,
+      isConnectedToAccount,
+      chainId,
+      accountId
+    }
+
     return (
       <div>
         <Router>
@@ -61,14 +109,14 @@ export class App extends React.Component {
                       <About />
                     </Route>
                     <Route path="/">
-                      <User entities={this.state.entities} />
+                      <User {...userProps} />
                       <CollectionNav />
                       <Switch>
                         <Route path="/myCollection">
-                          <Searchable entities={this.state.myCollection} />
+                          <Searchable entities={this.state.entities} owner={this.state.accountId} />
                         </Route>
                         <Route path="/">
-                          <Searchable entities={this.state.wild} />
+                          <Searchable entities={this.state.entities} />
                         </Route>
                       </Switch>
                     </Route>
