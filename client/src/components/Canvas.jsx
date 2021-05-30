@@ -14,10 +14,8 @@ function convertCanvasToImage(canvasNode) {
     let image = new Image();
     image.src = canvasNode.toDataURL();
     return image;
-  }
+}
 
-
-var iso;
 export class Canvas extends React.Component {
     constructor(props) {
         super(props)
@@ -42,7 +40,7 @@ export class Canvas extends React.Component {
 
             console.log('Canvas', 'rgbArr', rgbArr);
 
-            iso = new Isomer(this.canvasRef.current);
+            const iso = new Isomer(this.canvasRef.current);
             const cube = Isomer.Shape.Prism(Isomer.Point.ORIGIN).scale(Isomer.Point.ORIGIN, 2.5, 2.5, 0.3)
             let i = -1.2
             for (let color of rgbArr) {
@@ -78,12 +76,12 @@ export class Canvas extends React.Component {
 
                 console.log('Canvas', 'rgbArr', rgbArr);
 
-                iso = new Isomer(this.canvasRef.current);
+                const iso = new Isomer(this.canvasRef.current);
                 const cube = Isomer.Shape.Prism(Isomer.Point.ORIGIN).scale(Isomer.Point.ORIGIN, 1, 1, 0.3)
                 let i = -1.2
                 for (let color of rgbArr) {
                     const isoColor = new Isomer.Color(color.r, color.g, color.b)
-                    iso.add(cube.translate(-1+j, 0, i), isoColor)
+                    iso.add(cube.translate(-1 + j, 0, i), isoColor)
                     i = i + 0.6
                 }
 
