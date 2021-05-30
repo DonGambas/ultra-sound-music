@@ -1,21 +1,34 @@
 import React  from 'react';
+import PropTypes from 'prop-types';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
+import EntityButton from './EntityButton';
 
 import './EntityCard.scss';
 
 export class EntityCard extends React.Component {
+  static propTypes = {
+    name: PropTypes.string,
+    description: PropTypes.string
+  };
+
   render() {
+    const {
+      name,
+      description
+    } = this.props;
+
+    const buttonProps  = {
+
+    };
+
     return (
       <Card className='EntityCard'>
         <Card.Img variant="top" src="holder.js/100px180" />
         <Card.Body>
-          <Card.Title>Card Title</Card.Title>
-          <Card.Text>
-            Some quick example text to build on the card title and make up the bulk of
-            the card's content.
-          </Card.Text>
-          <Button variant="primary">Go somewhere</Button>
+          <Card.Title>name</Card.Title>
+          <Card.Text>{description}</Card.Text>
+          <EntityButton {...buttonProps} />
         </Card.Body>
       </Card>  
     );    

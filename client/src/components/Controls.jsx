@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Button from 'react-bootstrap/Button';
 import { ethers } from 'ethers';
-import { togglePlayback, downloadAudio } from '../audio'
+import { togglePlayback } from '../audio';
 import * as Actions from '../redux/actions';
 import * as metaMask from '../utils/metaMask';
 import usmAbi from '../web3/usmAbi';
@@ -59,9 +59,6 @@ export class Controls extends React.Component {
             <Button style={{ width: "250px", height: "40px", margin: "8px" }} onClick={async () => {
               this.setState({ currentPlayState: await togglePlayback(this.props.accountId) })
             }}>{this.state.currentPlayState ? 'Stop Audio' : 'Play Audio'}</Button>
-            <Button style={{ width: "250px", height: "40px", margin: "8px" }} onClick={async () => {
-              downloadAudio(this.props.accountId)
-            }}>Download Audio</Button>
           </>
         }
       </div>

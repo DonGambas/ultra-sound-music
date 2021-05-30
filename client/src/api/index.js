@@ -12,7 +12,10 @@ export async function createMetaDataUri({
     name,
     description,
     artistDNA
-  }, {
-    headers: {"Access-Control-Allow-Origin": "*"}
   });
+}
+
+
+export async function getAllEntities() {
+  return axios.get(`${apiDomain}/cache`);
 }
