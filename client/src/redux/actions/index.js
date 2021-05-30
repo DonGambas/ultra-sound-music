@@ -15,7 +15,7 @@ export function setEntities(entities) {
     data: {
       entities
     }
-  }
+  };
 }
 
 export function installMetaMask() {
@@ -34,7 +34,7 @@ export function showModal({
     data: {
       title,
       bodyText,
-      ctaText      
+      ctaText
     }
   };
 }

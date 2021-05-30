@@ -34,7 +34,7 @@ export async function request() {
 }
 
 export async function getChainId() {
-  return await ethereum.request({ method: 'eth_chainId' });
+  await ethereum.request({ method: 'eth_chainId' });
 }
 
 export async function connectToMetaMask() {
