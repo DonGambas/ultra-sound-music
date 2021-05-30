@@ -508,6 +508,11 @@ export default [
         "internalType": "uint256",
         "name": "artistId",
         "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "_uri",
+        "type": "string"
       }
     ],
     "name": "startBand",

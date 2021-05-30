@@ -2,12 +2,14 @@ import React  from 'react';
 import PropTypes from 'prop-types';
 // import CardDeck from 'react-bootstrap/CardDeck';
 import EntityCard from './EntityCard';
+import * as entitiesUtils from '../utils/entities';
 
 import './Entities.scss';
 
 export class Entities extends React.Component {
   static propTypes = {
-    entities: PropTypes.array
+    entities: PropTypes.array,
+    currentAccountId: PropTypes.string
   }
 
   static defaultProps = {
@@ -15,7 +17,11 @@ export class Entities extends React.Component {
   }
 
   renderEntities = () => {
-    const { entities } = this.props;
+    const {
+      entities,
+      currentAccountId
+    } = this.props;
+
     if (!entities.length) {
       return;
     }
@@ -31,7 +37,7 @@ export class Entities extends React.Component {
       } else if (entity.tokenType === 'artist') {
         addresses = [entity.metadata.artistDNA]
       } else if (entity.tokenType === 'track') {
-        addresses = [1,3,4,6];
+        addresses = [2,5,6];
       }
 
       const {
@@ -42,9 +48,13 @@ export class Entities extends React.Component {
       const props  = {
         name,
         description,
+        tokenType: entity.tokenType,
+        isOwned: entitiesUtils.entityIsOwned(entity, currentAccountId),
+        hasAlreadyPublishedTrack: entitiesUtils.hasAlreadyPublishedTrack(entity, currentAccountId),
+        numBandMembersNeeded: entity.tokenType === 'band' && (4 - entity.members.length),        
         addresses
       };
-debugger;
+
       return <EntityCard key={index} {...props} />
     });
   }

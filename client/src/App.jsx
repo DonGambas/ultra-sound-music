@@ -113,10 +113,10 @@ export class App extends React.Component {
                       <CollectionNav />
                       <Switch>
                         <Route path="/myCollection">
-                          <Searchable entities={this.state.entities} owner={this.state.accountId} />
+                          <Searchable entities={this.state.entities} currentAccountId={this.state.accountId} onlyOwned={true} />
                         </Route>
                         <Route path="/">
-                          <Searchable entities={this.state.entities} />
+                          <Searchable entities={this.state.entities} currentAccountId={this.state.accountId} />
                         </Route>
                       </Switch>
                     </Route>

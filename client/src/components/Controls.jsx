@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Button from 'react-bootstrap/Button';
 import { ethers } from 'ethers';
-import { togglePlayback, downloadAudio, toggleTrackAudioPlayback } from '../audio'
+import { togglePlayback } from '../audio'
 import * as Actions from '../redux/actions';
 import * as metaMask from '../utils/metaMask';
 import usmAbi from '../web3/usmAbi';
@@ -38,7 +38,6 @@ export class Controls extends React.Component {
     // const contract = new ethers.Contract(contractAddress, usmAbi, provider);
     const writeContract = new ethers.Contract(contractAddress, usmAbi, provider.getSigner());
     try {
-      // const fakeTokenId = `${Date.now()}`;
       const { data } = await api.createMetaDataUri({
         name: 'bubsy',
         description: 'bubsy\'s cooll token!',
@@ -62,12 +61,6 @@ export class Controls extends React.Component {
             <Button style={{ width: BUTTON_WIDTH, height: "40px", margin: "8px" }} onClick={async () => {
               this.setState({ currentPlayState: await togglePlayback(this.props.accountId) })
             }}>{this.state.currentPlayState ? 'Stop Artist' : 'Play Artist'}</Button>
-            <Button style={{ width: BUTTON_WIDTH, height: "40px", margin: "8px" }} onClick={async () => {
-              downloadAudio(this.props.accountId)
-            }}>Save Audio</Button>
-            <Button style={{ width: BUTTON_WIDTH, height: "40px", margin: "8px" }} onClick={async () => {
-              this.setState({ currentTrackPlayState: await toggleTrackAudioPlayback() })
-            }}>{this.state.currentTrackPlayState ? 'Stop Track' : 'Play Track'}</Button>
           </>
         }
       </div>

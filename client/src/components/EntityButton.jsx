@@ -8,8 +8,9 @@ const MAX_BAND_MEMBERS = 4;
 
 export class EntityButton extends React.Component {
   static propTypes = {
-    entityType: PropTypes.object,
+    tokenType: PropTypes.string,
     isOwned: PropTypes.bool,
+    isMember: PropTypes.bool,
     hasAlreadyPublishedTrack: PropTypes.bool,
     numBandMembersNeeded: PropTypes.number
   };
@@ -17,10 +18,10 @@ export class EntityButton extends React.Component {
   render() {
     let ctaText = '';
     let isDisabled = false;
-    if (this.props.entityType === 'track') {
+    if (this.props.tokenType === 'track') {
       ctaText = 'Play';
-    } else if (this.props.entityType === 'band') {
-      if (hasAlreadyPublishedTrack) {
+    } else if (this.props.tokenType === 'band') {
+      if (this.props.hasAlreadyPublishedTrack) {
         ctaText = 'Already published track';
         isDisabled = true;
       } else if (isMember && numBandMembersNeeded >= MAX_BAND_MEMBERS) {

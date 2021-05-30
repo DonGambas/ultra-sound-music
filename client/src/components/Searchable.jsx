@@ -8,6 +8,8 @@ import Entities from './Entities';
 
 export class Searchable extends React.Component {
   static propTypes = {
+    onlyOwned: PropTypes.bool,
+    currentAccountId: PropTypes.string,
     entities: PropTypes.array
   };
 
@@ -50,7 +52,7 @@ export class Searchable extends React.Component {
           <Nav.Link>Bands</Nav.Link>
           <Nav.Link>Tracks</Nav.Link>
         </Navbar>
-        <Entities entities={entities} />
+        <Entities entities={entities} currentAccountId={this.props.currentAccountId} />
       </div>      
     );
   }

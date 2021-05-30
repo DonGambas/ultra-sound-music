@@ -5,6 +5,7 @@ import Button from 'react-bootstrap/Button';
 import { ethers } from 'ethers';
 import * as Actions from '../redux/actions'
 import usmAbi from '../web3/usmAbi';
+import * as api from '../api';
 import * as entitiesUtils from '../utils/entities';
 import * as metaMask from '../utils/metaMask';
 
@@ -26,8 +27,13 @@ export class ArtistControls extends React.Component {
     const contract = new ethers.Contract(contractAddress, usmAbi, provider);
     const writeContract = new ethers.Contract(contractAddress, usmAbi, provider.getSigner());
     try {
+      const { data } = await api.createMetaDataUri({
+        name: 'The Bitey\'s',
+        description: 'One bitey, two bitey, threee bitey, four...',
+        artistDNA: this.props.accountId
+      });      
       const ownedArtists = entitiesUtils.getOwnedArtists(this.props.entities, this.props.accountId);
-      await writeContract.startBand(ownedArtists[0].tokenId);
+      await writeContract.startBand(ownedArtists[0].tokenId, data.metadataUri);
     } catch (error) {
       this.props.showModal({
         title: 'Error',
