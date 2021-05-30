@@ -7,12 +7,12 @@ const mongoose = require('mongoose');
 const Artist = require("./db/models/Artist") // new
 const Track = require("./db/models/Track")
 const Band = require ("./db/models/Band")
+const fleekStorage = require('@fleekhq/fleek-storage-js')
 
 
 const Network = require( './contracts/network.json');
 const UltraSoundMusicABI = require( './contracts/UltraSoundMusicABI.json');
-//import { SimpleStorageInstance } from './contracts/types/truffle-contracts/index';
-//import sql from './db';
+
 
 const nullAddress = "0x0000000000000000000000000000000000000000";
 
@@ -127,7 +127,19 @@ app.get('/cache/tracks', async (req, res) => {
 });
 
 app.post("/create_metadata_uri", async(req,res)=> {
-  res.send({metadataURI: "https://test.test"})
+
+  const obj = req.body
+
+  const key = `${Date.now()}`
+
+  const {publicUrl: metadataUri} = await fleekStorage.upload({
+    apiKey: process.env.FLEEK_API_KEY,
+    apiSecret: process.env.FLEEK_API_SECRET,
+    key,
+    data: JSON.stringify(obj)
+  });
+
+  res.send({metadataUri})
 })
 
 app.listen(port, async () => {
