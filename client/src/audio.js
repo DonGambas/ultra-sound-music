@@ -1,8 +1,12 @@
 import * as Tone from 'tone';
 
-const WALLET_ADDRESS = '0x963CFC0Bfb272BA9512621a677A31884c5c2A4DB'; // Vijay's Metamask wallet
-const ACCOUNT_0 = '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266';
-const ACCOUNT_1 = '0x70997970c51812dc3a010c7d01b50e0d17dc79c8';
+const MY_WALLET_ADDRESS = '0x963CFC0Bfb272BA9512621a677A31884c5c2A4DB'; // Vijay's Metamask wallet
+const ACCOUNTS = [
+    '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266',
+    '0x70997970c51812dc3a010c7d01b50e0d17dc79c8',
+    '0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc',
+    '0x90f79bf6eb2c4f870365e785982e1f101e93b906',
+]
 
 const DEFAULT_BPM = 56;
 const DEFAULT_SEQUENCE = ['*', '*', '*', '*'];
@@ -225,11 +229,14 @@ const segmentBassChars = (char) => {
 };
 
 const charsToDrumInput = (charStr) => {
-    const output = [[], [], [], []];
+    const output = [];
     let counter = 0;
     for (const idx in charStr) {
         const char = charStr[idx];
         const pair = segmentDrumChars(char);
+        if (idx % 2 === 0) {
+            output.push([])
+        }
         output[counter].push(...pair);
         if ((idx % 2) === 1) {
             counter++;
@@ -240,11 +247,14 @@ const charsToDrumInput = (charStr) => {
 };
 
 const charsToKeysInput = (charStr) => {
-    const output = [[], [], [], []];
+    const output = [];
     let counter = 0;
     for (const idx in charStr) {
         const char = charStr[idx];
         const pair = segmentKeyChars(char);
+        if (idx % 2 === 0) {
+            output.push([])
+        }
         output[counter].push(...pair);
         if ((idx % 2) === 1) {
             counter++;
@@ -255,11 +265,14 @@ const charsToKeysInput = (charStr) => {
 };
 
 const charsToBassInput = (charStr) => {
-    const output = [[], [], [], []];
+    const output = [];
     let counter = 0;
     for (const idx in charStr) {
         const char = charStr[idx];
         const pair = segmentBassChars(char);
+        if (idx % 2 === 0) {
+            output.push([])
+        }
         output[counter].push(...pair);
         if ((idx % 2) === 1) {
             counter++;
@@ -269,16 +282,135 @@ const charsToBassInput = (charStr) => {
     return output;
 };
 
-let lastAddress;
-let kickSeq; let snareSeq; let hihatSeq; let keysSeq; let
-    bassSeq;
-export const generateAudioFromWallet = (address) => {
-    if (!address || !address.length) {
-        console.log('NO ADDRESS GIVEN');
+let kickSeq;
+let snareSeq;
+let hihatSeq;
+let keysSeq;
+let bassSeq;
+
+let lastTrackMinterAddress;
+export const generateTrackAudioFrom4Wallets = (
+    trackMinterAddress = ACCOUNTS[0],
+    bandmate1Address = ACCOUNTS[1],
+    bandmate2Address = ACCOUNTS[2],
+    bandmate3Address = ACCOUNTS[3]
+) => {
+    if (!trackMinterAddress || !bandmate1Address || !bandmate2Address || !bandmate3Address) {
+        console.error('MISSING AN ADDRESS', {
+            trackMinterAddress,
+            bandmate1Address,
+            bandmate2Address,
+            bandmate3Address,
+        });
         return;
     }
 
-    lastAddress = address;
+    console.log('Got 4 Addresses', {
+        trackMinterAddress,
+        bandmate1Address,
+        bandmate2Address,
+        bandmate3Address,
+    });
+
+    lastTrackMinterAddress = trackMinterAddress
+
+    let splitArr = trackMinterAddress.split('x');
+    const fortyChars = []
+    fortyChars[0] = splitArr[1].toLowerCase();
+
+    splitArr = bandmate1Address.split('x');
+    fortyChars[1] = splitArr[1].toLowerCase();
+
+    splitArr = bandmate2Address.split('x');
+    fortyChars[2] = splitArr[1].toLowerCase();
+
+    splitArr = bandmate3Address.split('x');
+    fortyChars[3] = splitArr[1].toLowerCase();
+
+    const kickChars =
+        fortyChars[0].substring(0, 8) +
+        fortyChars[1].substring(0, 8) +
+        fortyChars[2].substring(0, 8) +
+        fortyChars[3].substring(0, 8)
+    const snareChars =
+        fortyChars[0].substring(8, 16) +
+        fortyChars[1].substring(8, 16) +
+        fortyChars[2].substring(8, 16) +
+        fortyChars[3].substring(8, 16)
+    const hihatChars =
+        fortyChars[0].substring(16, 24) +
+        fortyChars[1].substring(16, 24) +
+        fortyChars[2].substring(16, 24) +
+        fortyChars[3].substring(16, 24)
+    const keysChars =
+        fortyChars[0].substring(24, 32) +
+        fortyChars[1].substring(24, 32) +
+        fortyChars[2].substring(24, 32) +
+        fortyChars[3].substring(24, 32)
+    const bassChars =
+        fortyChars[0].substring(32, 40) +
+        fortyChars[1].substring(32, 40) +
+        fortyChars[2].substring(32, 40) +
+        fortyChars[3].substring(32, 40)
+
+    const kickInput = charsToDrumInput(kickChars);
+    console.log('kickInput', kickInput);
+    if (kickSeq) kickSeq.dispose();
+    kickSeq = new Tone.Sequence((time, note) => {
+        if (note === '*') {
+            kick.triggerAttack('C1', time);
+        }
+    }, kickInput).start(0);
+
+    const snareInput = charsToDrumInput(snareChars);
+    console.log('snareInput', snareInput);
+    if (snareSeq) snareSeq.dispose();
+    snareSeq = new Tone.Sequence((time, note) => {
+        if (note === '*') {
+            snare.start(time);
+        }
+    }, snareInput).start(0);
+
+    const hihatInput = charsToDrumInput(hihatChars);
+    console.log('hihatInput', hihatInput);
+    if (hihatSeq) hihatSeq.dispose();
+    hihatSeq = new Tone.Sequence((time, note) => {
+        if (note === '*') {
+            hats.start(time);
+        }
+    }, hihatInput).start(0);
+
+    const keysInput = charsToKeysInput(keysChars);
+    console.log('keysInput', keysInput);
+    if (keysSeq) keysSeq.dispose();
+    keysSeq = new Tone.Sequence((time, note) => {
+        if (note !== '') {
+            console.log('time', time, note);
+            salamanderKeys.triggerAttackRelease(note, '8n');
+        }
+    }, keysInput).start(0);
+
+    const bassInput = charsToBassInput(bassChars);
+    console.log('bassInput', bassInput);
+    if (bassSeq) bassSeq.dispose();
+    bassSeq = new Tone.Sequence((time, note) => {
+        if (note !== '') {
+            console.log('time', time, note);
+            monoBass.triggerAttackRelease(note, '16n');
+        }
+    }, bassInput).start(0);
+
+    Tone.Transport.bpm.value = DEFAULT_BPM;
+}
+
+let lastActiveAddress;
+export const generateAudioFromWallet = (address) => {
+    if (!address) {
+        console.error('NO ADDRESS GIVEN');
+        return;
+    }
+
+    lastActiveAddress = address;
 
     const splitArr = address.split('x');
     const fortyChars = splitArr[1].toLowerCase();
@@ -292,8 +424,6 @@ export const generateAudioFromWallet = (address) => {
         if (note === '*') {
             kick.triggerAttack('C1', time);
         }
-        // synth.triggerAttackRelease(note, 0.1, time);
-        // subdivisions are given as subarrays
     }, kickInput).start(0);
 
     const snareInput = charsToDrumInput(fortyChars.substring(8, 16));
@@ -305,6 +435,12 @@ export const generateAudioFromWallet = (address) => {
         }
     }, snareInput).start(0);
 
+    if (keysSeq) keysSeq.dispose();
+    if (bassSeq) bassSeq.dispose();
+
+    Tone.Transport.bpm.value = DEFAULT_BPM;
+
+    /*
     const hihatInput = charsToDrumInput(fortyChars.substring(16, 24));
     console.log('hihatInput', hihatInput);
     if (hihatSeq) hihatSeq.dispose();
@@ -333,6 +469,7 @@ export const generateAudioFromWallet = (address) => {
             monoBass.triggerAttackRelease(note, '16n');
         }
     }, bassInput).start(0);
+    */
 
     Tone.Transport.bpm.value = DEFAULT_BPM;
 };
@@ -341,30 +478,52 @@ let isInitialized = false;
 export const togglePlayback = async (address = DEFAULT_ADDRESS) => {
     console.log('togglePlayback', address, isInitialized);
 
-    if (!address) {
-        console.log('NO ADDRESS GIVEN');
-        return false;
-    }
-
     if (!isInitialized) {
         await Tone.start();
         isInitialized = true;
-        console.log('context started');
     }
 
-    if (address !== lastAddress) {
+    if (address !== lastActiveAddress) {
         generateAudioFromWallet(address);
     }
 
     Tone.Transport.toggle();
 
     if (Tone.Transport.state === 'started') {
-        console.log('PLAYING');
+        console.log('PLAYING ARTIST');
         return true;
     }
-    console.log('STOPPED');
+    console.log('STOPPED ARTIST');
     return false;
 };
+
+export const toggleTrackAudioPlayback = async (
+    trackMinterAddress = ACCOUNTS[0],
+    bandmate1Address = ACCOUNTS[1],
+    bandmate2Address = ACCOUNTS[2],
+    bandmate3Address = ACCOUNTS[3],
+) => {
+    if (!isInitialized) {
+        await Tone.start();
+        isInitialized = true;
+    }
+
+    generateTrackAudioFrom4Wallets(
+        trackMinterAddress,
+        bandmate1Address,
+        bandmate2Address,
+        bandmate3Address,
+    );
+
+    Tone.Transport.toggle();
+
+    if (Tone.Transport.state === 'started') {
+        console.log('PLAYING TRACK');
+        return true;
+    }
+    console.log('STOPPED TRACK');
+    return false;
+}
 
 export const downloadAudio = async (address = DEFAULT_ADDRESS) => {
     console.log('downloadAudio', address, isInitialized);
@@ -378,7 +537,7 @@ export const downloadAudio = async (address = DEFAULT_ADDRESS) => {
         await Tone.start();
     }
 
-    if (lastAddress !== address) {
+    if (lastActiveAddress !== address) {
         generateAudioFromWallet(address);
     }
 
@@ -396,7 +555,7 @@ export const downloadAudio = async (address = DEFAULT_ADDRESS) => {
         // download the recording by creating an anchor element and blob url
         const url = URL.createObjectURL(recording);
         const anchor = document.createElement('a');
-        anchor.download = `artist_audio_${lastAddress}.webm`;
+        anchor.download = `artist_audio_${lastActiveAddress}.webm`;
         anchor.href = url;
         anchor.click();
     }, 3000);
