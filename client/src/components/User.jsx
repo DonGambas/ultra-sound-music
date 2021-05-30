@@ -83,7 +83,7 @@ export class User extends React.Component {
       );
     } 
 
-    let canvas = <Canvas address={this.state.accountId} />;
+    let canvas = <Canvas addresses={[this.state.accountId]} />;
 
     return (
       <div className='User'>
