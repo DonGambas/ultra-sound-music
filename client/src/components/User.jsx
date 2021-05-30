@@ -7,51 +7,29 @@ import ArtistControls from './ArtistControls';
 import Controls from './Controls';
 import Canvas from './Canvas';
 import * as entitiesUtils from '../utils/entities';
-import * as metaMask from '../utils/metaMask';
-
 
 import './User.scss';
 import { debug } from 'tone';
 
 export class User extends React.Component {
   static propTypes = {
-    entities: PropTypes.array 
+    updateTransactionHash: PropTypes.func,
+    entities: PropTypes.array,
+    isConnectedToNetwork: PropTypes.bool,
+    isConnectedToAccount: PropTypes.bool,
+    chainId: PropTypes.string,
+    accountId: PropTypes.string   
   }
 
-  state = {
+  static defaultProps = {
     isConnectedToNetwork: false,
     isConnectedToAccount: false,
     chainId: '',
-    accountId: ''
+    accountId: ''    
   }
 
   async componentDidMount() {
-    const chainId = await metaMask.getChainId();
-    const accountId = await metaMask.getAccountId();
-    const isConnectedToAccount = await metaMask.isConnectedToAccount();
-    const isConnectedToNetwork = metaMask.isConnectedToNetwork();
 
-    this.setState({
-      isConnectedToNetwork,
-      isConnectedToAccount,
-      chainId,
-      accountId
-    });
-
-    ethereum.on('chainChanged', (chainId) => {
-      this.setState({
-        isConnectedToNetwork: !!chainId,
-        chainId
-      });
-    });
-
-    ethereum.on('accountsChanged', (accounts) => {
-      const accountId = accounts[0];
-      this.setState({
-        isConnectedToAccount: !!accountId,
-        accountId
-      });
-    });
   }
 
   async componentWillUnmount() {
@@ -59,31 +37,39 @@ export class User extends React.Component {
   }
 
   render() {
-    const hasAlreadyMintedAnArtist = entitiesUtils.hasAlreadyMintedAnArtist(this.props.entities, this.state.accountId);
-    const hasAlreadyMintedABand = entitiesUtils.hasAlreadyMintedABand(this.props.entities, this.state.accountId);
-  
+    const {
+      entities,
+      accountId,
+      chainId,
+      isConnectedToAccount,
+      isConnectedToNetwork,
+      updateTransactionHash
+    } = this.props;
+
+    const hasAlreadyMintedAnArtist = entitiesUtils.hasAlreadyMintedAnArtist(entities, accountId);
+    const hasAlreadyMintedABand = entitiesUtils.hasAlreadyMintedABand(entities, accountId);
     let content;
     if (hasAlreadyMintedABand) {
       content = 'Now Just Publish Some Tracks';
     } else if (hasAlreadyMintedAnArtist) {
-      content = <ArtistControls accountId={this.state.accountId} entities={this.props.entities} />;
-    } else if (this.state.isConnectedToAccount) {
-      content = <Controls accountId={this.state.accountId} />;
+      content = <ArtistControls accountId={accountId} entities={entities} />;
+    } else if (isConnectedToAccount) {
+      content = <Controls accountId={accountId} updateTransactionHash={updateTransactionHash} />;
     } else {
       content = <MetaMaskButton />;
     }
 
     let userInfo;
-    if (this.state.isConnectedToNetwork) {
+    if (isConnectedToNetwork) {
       userInfo = (
         <div>
-            <p>{`Chain Id: ${this.state.chainId}`}</p>
-            <p>{`Active wallet: ${this.state.accountId}`}</p> 
+            <p>{`Chain Id: ${chainId}`}</p>
+            <p>{`Active wallet: ${accountId}`}</p> 
         </div>
       );
     } 
 
-    let canvas = <Canvas address={this.state.accountId} />;
+    let canvas = <Canvas addresses={[accountId]} />;
 
     return (
       <div className='User'>

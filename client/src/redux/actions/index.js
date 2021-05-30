@@ -24,6 +24,12 @@ export function installMetaMask() {
   };
 }
 
+export function updateAppUI() {
+  return {
+    type: 'UPDATE_APP_UI'
+  }
+}
+
 export function showModal({
   title,
   bodyText,

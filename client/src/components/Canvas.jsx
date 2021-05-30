@@ -14,10 +14,8 @@ function convertCanvasToImage(canvasNode) {
     let image = new Image();
     image.src = canvasNode.toDataURL();
     return image;
-  }
+}
 
-
-var iso;
 export class Canvas extends React.Component {
     constructor(props) {
         super(props)
@@ -26,8 +24,10 @@ export class Canvas extends React.Component {
     }
 
     componentDidUpdate() {
-        if (this.props.address) {
-            const splitArr = this.props.address.split('x');
+        console.log('Canvas', 'componentDidUpdate', this.props.addresses);
+        if (!this.props.addresses[0]) return
+        if (this.props.addresses.length === 1) {
+            const splitArr = this.props.addresses[0].split('x');
             const fortyChars = splitArr[1].toLowerCase();
 
             console.log('Canvas', 'fortyChars', fortyChars, fortyChars.length);
@@ -40,7 +40,7 @@ export class Canvas extends React.Component {
 
             console.log('Canvas', 'rgbArr', rgbArr);
 
-            iso = new Isomer(this.canvasRef.current);
+            const iso = new Isomer(this.canvasRef.current);
             const cube = Isomer.Shape.Prism(Isomer.Point.ORIGIN).scale(Isomer.Point.ORIGIN, 2.5, 2.5, 0.3)
             let i = -1.2
             for (let color of rgbArr) {
@@ -56,6 +56,44 @@ export class Canvas extends React.Component {
                 container.replaceChild(pngImage, container.childNodes[1])
             } else {
                 container.appendChild(pngImage)
+            }
+        } else {
+            const fortyCharsArr = []
+            for (let address of this.props.addresses) {
+                let splitArr = address.split('x')
+                fortyCharsArr.push(splitArr[1].toLowerCase())
+            }
+
+            console.log('Canvas', 'fortyChars', fortyCharsArr, fortyCharsArr.length);
+
+            let j = 0
+            for (let fortyChars of fortyCharsArr) {
+                const rgbArr = []
+                for (let i = 0; i < fortyChars.length; i += 6) {
+                    if (i + 6 >= fortyChars.length) break
+                    rgbArr.push(hexToRgb(fortyChars.substring(i, i + 6)));
+                }
+
+                console.log('Canvas', 'rgbArr', rgbArr);
+
+                const iso = new Isomer(this.canvasRef.current);
+                const cube = Isomer.Shape.Prism(Isomer.Point.ORIGIN).scale(Isomer.Point.ORIGIN, 1, 1, 0.3)
+                let i = -1.2
+                for (let color of rgbArr) {
+                    const isoColor = new Isomer.Color(color.r, color.g, color.b)
+                    iso.add(cube.translate(-1 + j, 0, i), isoColor)
+                    i = i + 0.6
+                }
+
+                const pngImage = convertCanvasToImage(this.canvasRef.current)
+                const container = this.containRef.current
+                console.log('images', container.childNodes.length)
+                if (container.childNodes.length > 1) {
+                    container.replaceChild(pngImage, container.childNodes[1])
+                } else {
+                    container.appendChild(pngImage)
+                }
+                j++
             }
         }
     }

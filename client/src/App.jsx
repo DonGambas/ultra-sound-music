@@ -18,6 +18,7 @@ import User from './components/User';
 import Alert from './components/Alert';
 import Searchable from './components/Searchable';
 import * as api from './api';
+import * as metaMask from './utils/metaMask';
 
 import './App.css';
 
@@ -25,18 +26,84 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 export class App extends React.Component {
   state = {
-    entities: []
+    entities: [],
+    isConnectedToNetwork: false,
+    isConnectedToAccount: false,
+    chainId: '',
+    accountId: '',
+    transactionHash: 'x' // Hack for redrawing upon successful transaction
   }
 
-  componentDidMount() {
-    api.getAllEntities().then(({ data }) => {
+  async componentDidMount() {
+    const chainId = await metaMask.getChainId();
+    const accountId = await metaMask.getAccountId();
+    const isConnectedToAccount = await metaMask.isConnectedToAccount();
+    const isConnectedToNetwork = metaMask.isConnectedToNetwork();
+
+    this.setState({
+      isConnectedToNetwork,
+      isConnectedToAccount,
+      chainId,
+      accountId
+    });    
+
+    api.getAllEntities().then(({data}) => {
       this.setState({
         entities: data
       });
     });
+
+    ethereum.on('chainChanged', (chainId) => {
+      this.setState({
+        isConnectedToNetwork: !!chainId,
+        chainId
+      });
+    });
+
+    ethereum.on('accountsChanged', (accounts) => {
+      const accountId = accounts[0];
+      this.setState({
+        isConnectedToAccount: !!accountId,
+        accountId
+      });
+    });    
+  }
+
+  async componentDidUpdate(prevProps, prevState) {
+    if (prevState.transactionHash && (prevState.transactionHash !== this.state.transactionHash)) {
+      api.getAllEntities().then(({data}) => {
+        this.setState({
+          entities: data
+        });
+      });
+    }
+  }
+
+  updateTransactionHash = (tx) => {
+    const hash = tx && tx.hash
+    this.setState({
+      transactionHash: hash
+    });
   }
 
   render() {
+    const {
+      entities,
+      isConnectedToNetwork,
+      isConnectedToAccount,
+      chainId,
+      accountId
+    } = this.state; 
+
+    const userProps = {
+      updateTransactionHash: this.updateTransactionHash,
+      entities,
+      isConnectedToNetwork,
+      isConnectedToAccount,
+      chainId,
+      accountId
+    }
+
     return (
       <div>
         <Router>
@@ -46,6 +113,7 @@ export class App extends React.Component {
                 <Navbar.Brand><Link to="/">🦇 🔉 🎼 Ultra Sound Music Project</Link></Navbar.Brand>
                 <Nav className="mr-auto">
                   <Nav.Link href="/about">About</Nav.Link>
+                  <Nav.Link href="/myCollection">My Collection</Nav.Link>
                 </Nav>
                 <Nav>
                   <Nav.Link eventKey={2} href="">
@@ -61,14 +129,14 @@ export class App extends React.Component {
                       <About />
                     </Route>
                     <Route path="/">
-                      <User entities={this.state.entities} />
-                      <CollectionNav />
+                      <User {...userProps} />
+                      {/* <CollectionNav /> @todo - also get rid of the component */}
                       <Switch>
                         <Route path="/myCollection">
-                          <Searchable entities={this.state.myCollection} />
+                          <Searchable entities={this.state.entities} currentAccountId={this.state.accountId} onlyOwned={true} updateTransactionHash={this.updateTransactionHash}/>
                         </Route>
                         <Route path="/">
-                          <Searchable entities={this.state.wild} />
+                          <Searchable entities={this.state.entities} currentAccountId={this.state.accountId} updateTransactionHash={this.updateTransactionHash} />
                         </Route>
                       </Switch>
                     </Route>

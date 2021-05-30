@@ -8,7 +8,10 @@ import Entities from './Entities';
 
 export class Searchable extends React.Component {
   static propTypes = {
-    entities: PropTypes.array
+    onlyOwned: PropTypes.bool,
+    currentAccountId: PropTypes.string,
+    entities: PropTypes.array,
+    updateTransactionHash: PropTypes.func
   };
 
   state = {
@@ -45,12 +48,7 @@ export class Searchable extends React.Component {
     return (
       <div className="Searchable">
         <Search onChange={this.onChange} onClear={this.onClear} />
-        <Navbar bg="light" expand="lg">
-          <Nav.Link>Artists</Nav.Link>
-          <Nav.Link>Bands</Nav.Link>
-          <Nav.Link>Tracks</Nav.Link>
-        </Navbar>
-        <Entities entities={entities} />
+        <Entities entities={entities} currentAccountId={this.props.currentAccountId} updateTransactionHash={this.props.updateTransactionHash}/>
       </div>      
     );
   }
