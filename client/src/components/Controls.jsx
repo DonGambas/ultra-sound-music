@@ -13,6 +13,7 @@ import * as Actions from '../redux/actions';
 import * as metaMask from '../utils/metaMask';
 import usmAbi from '../web3/usmAbi';
 import * as api from '../api';
+import * as constants from '../constants';
 
 const BUTTON_WIDTH = "110px"
 
@@ -45,11 +46,9 @@ export class Controls extends React.Component {
   }
 
   async createArtist() {
-    const contractAddress = '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512';
-
     const provider = metaMask.getProvider();
-    // const contract = new ethers.Contract(contractAddress, usmAbi, provider);
-    const writeContract = new ethers.Contract(contractAddress, usmAbi, provider.getSigner());
+    // const contract = new ethers.Contract(constants.CONTRACT_ADDRESS, usmAbi, provider);
+    const writeContract = new ethers.Contract(constants.CONTRACT_ADDRESS, usmAbi, provider.getSigner());
     try {
       const { data } = await api.createMetaDataUri({
         name: this.nameRef.current.value || 'NO NAME',

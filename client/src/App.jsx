@@ -53,20 +53,22 @@ export class App extends React.Component {
       });
     });
 
-    ethereum.on('chainChanged', (chainId) => {
-      this.setState({
-        isConnectedToNetwork: !!chainId,
-        chainId
+    if (window.ethereum) {
+      ethereum.on('chainChanged', (chainId) => {
+        this.setState({
+          isConnectedToNetwork: !!chainId,
+          chainId
+        });
       });
-    });
-
-    ethereum.on('accountsChanged', (accounts) => {
-      const accountId = accounts[0];
-      this.setState({
-        isConnectedToAccount: !!accountId,
-        accountId
-      });
-    });    
+  
+      ethereum.on('accountsChanged', (accounts) => {
+        const accountId = accounts[0];
+        this.setState({
+          isConnectedToAccount: !!accountId,
+          accountId
+        });
+      });   
+    } 
   }
 
   async componentDidUpdate(prevProps, prevState) {

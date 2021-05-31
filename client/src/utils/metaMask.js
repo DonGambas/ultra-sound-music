@@ -20,6 +20,10 @@ export function getProvider() {
 }
 
 export async function getAccountId() {
+  if (!ethereum) {
+    return '';
+  }
+
   provider = new ethers.providers.Web3Provider(ethereum);
   const accounts = await provider.listAccounts();
   return accounts[0];
@@ -34,10 +38,18 @@ export async function request() {
 }
 
 export async function getChainId() {
+  if (!ethereum) {
+    return '';
+  }
+  
   return ethereum.request({ method: 'eth_chainId' });
 }
 
 export async function connectToMetaMask() {
+  if (!ethereum) {
+    return;
+  }
+
   const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
   const activeAccount = accounts[0] || 'Not able to get accounts';
   return activeAccount;

@@ -10,6 +10,7 @@ import usmAbi from '../web3/usmAbi';
 import * as api from '../api';
 import * as entitiesUtils from '../utils/entities';
 import * as metaMask from '../utils/metaMask';
+import * as constants from '../constants;'
 
 export class ArtistControls extends React.Component {
   static propTypes = {
@@ -29,11 +30,9 @@ export class ArtistControls extends React.Component {
   }
 
   async createBand() {
-    const contractAddress = '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512';
-
     const provider = metaMask.getProvider();
-    const contract = new ethers.Contract(contractAddress, usmAbi, provider);
-    const writeContract = new ethers.Contract(contractAddress, usmAbi, provider.getSigner());
+    const contract = new ethers.Contract(constants.CONTRACT_ADDRESS, usmAbi, provider);
+    const writeContract = new ethers.Contract(constants.CONTRACT_ADDRESS, usmAbi, provider.getSigner());
     try {
       const { data } = await api.createMetaDataUri({
         name: this.nameRef.current.value,

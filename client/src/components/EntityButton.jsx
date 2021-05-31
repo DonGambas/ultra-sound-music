@@ -12,6 +12,7 @@ import * as metaMask from '../utils/metaMask';
 import * as api from '../api'
 import * as Actions from '../redux/actions';
 import * as entityUtils from '../utils/entities';
+import * as constants from '../constants';
 
 import './EntityButton.scss';
 
@@ -85,11 +86,9 @@ export class EntityButton extends React.Component {
   }
 
   async publishTrack() {
-    const contractAddress = '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512';
-
     const provider = metaMask.getProvider();
-    // const contract = new ethers.Contract(contractAddress, usmAbi, provider);
-    const writeContract = new ethers.Contract(contractAddress, usmAbi, provider.getSigner());
+    // const contract = new ethers.Contract(constants.CONTRACT_ADDRESS, usmAbi, provider);
+    const writeContract = new ethers.Contract(constants.CONTRACT_ADDRESS, usmAbi, provider.getSigner());
     try {
       const { data } = await api.createMetaDataUri({
         name: this.nameRef.current.value,
