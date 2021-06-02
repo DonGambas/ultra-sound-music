@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start-blockchain": "cd contracts && npm run compile-contracts && npm start",
+    "start-blockchain": "cd contracts && npm start",
     "start-api": "cd api && npm run start-db && npm start",
     "stop-db": "cd api && npm run stop-db",
     "start-client": "cd client && npm start",
