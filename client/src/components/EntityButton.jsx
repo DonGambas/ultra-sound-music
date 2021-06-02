@@ -6,7 +6,7 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import FormControl from 'react-bootstrap/FormControl';
 import Spinner from 'react-bootstrap/Spinner';
 import { ethers } from 'ethers'; 
-import usmAbi from '../web3/usmAbi';
+import usmAbi from '../lib/usmAbi';
 import { togglePlayback } from '../audio'
 import * as metaMask from '../utils/metaMask';
 import * as api from '../api'

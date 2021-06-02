@@ -11,7 +11,7 @@ import { ethers } from 'ethers';
 import { togglePlayback } from '../audio'
 import * as Actions from '../redux/actions';
 import * as metaMask from '../utils/metaMask';
-import usmAbi from '../web3/usmAbi';
+import usmAbi from '../lib/usmAbi';
 import * as api from '../api';
 import * as constants from '../constants';
 

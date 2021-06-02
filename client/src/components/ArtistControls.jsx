@@ -6,7 +6,7 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import FormControl from 'react-bootstrap/FormControl';
 import { ethers } from 'ethers';
 import * as Actions from '../redux/actions'
-import usmAbi from '../web3/usmAbi';
+import usmAbi from '../lib/usmAbi';
 import * as api from '../api';
 import * as entitiesUtils from '../utils/entities';
 import * as metaMask from '../utils/metaMask';
