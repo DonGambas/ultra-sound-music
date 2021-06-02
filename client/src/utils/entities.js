@@ -1,5 +1,5 @@
 import { ethers } from 'ethers'
-import usmAbi from '../web3/usmAbi';
+import usmAbi from '../lib/usmAbi';
 import * as metaMask from '../utils/metaMask';
 
 export function hasAlreadyMintedAnArtist(entities, currentAccountId) {
