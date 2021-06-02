@@ -10,7 +10,7 @@ import usmAbi from '../web3/usmAbi';
 import * as api from '../api';
 import * as entitiesUtils from '../utils/entities';
 import * as metaMask from '../utils/metaMask';
-import * as constants from '../constants;'
+import * as constants from '../constants';
 
 export class ArtistControls extends React.Component {
   static propTypes = {

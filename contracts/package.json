@@ -1,5 +1,10 @@
 {
   "name": "hardhat-project",
+  "scripts": {
+    "start": "npm run compile-contracts && hardhat node",
+    "compile-contracts": "hardhat compile",
+    "deploy-contracts": "hardhat run --network localhost scripts/deploy.js"
+  },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.2",
     "@nomiclabs/hardhat-waffle": "^2.0.1",
