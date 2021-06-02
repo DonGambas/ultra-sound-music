@@ -1,0 +1,23 @@
+{
+  "name": "ultra-sound-music",
+  "version": "1.0.0",
+  "description": "## Client",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start-blockchain": "cd contracts && npm run compile-contracts && npm start",
+    "start-api": "cd api && npm run start-db && npm start",
+    "start-client": "cd client && npm start",
+    "deploy-contracts": "npm run deploy-contracts"    
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DonGambas/ultra-sound-music.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DonGambas/ultra-sound-music/issues"
+  },
+  "homepage": "https://github.com/DonGambas/ultra-sound-music#readme"
+}

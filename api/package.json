@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node src/index.js"
+    "start": "npm run start-db && node src/index.js",
+    "start-db": "brew services start mongodb-community@4.4",
+    "stop-db": "brew services stop mongodb-community@4.4"
   },
   "keywords": [],
   "author": "",
