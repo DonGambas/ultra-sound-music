@@ -1,6 +1,5 @@
 import * as Tone from 'tone';
 
-const MY_WALLET_ADDRESS = '0x963CFC0Bfb272BA9512621a677A31884c5c2A4DB'; // Vijay's Metamask wallet
 const ACCOUNTS = [
     '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266',
     '0x70997970c51812dc3a010c7d01b50e0d17dc79c8',
@@ -9,18 +8,6 @@ const ACCOUNTS = [
 ]
 
 const DEFAULT_BPM = 56;
-const DEFAULT_SEQUENCE = ['*', '*', '*', '*'];
-
-const casioKeys = new Tone.Players({
-    urls: {
-        0: 'A1.mp3',
-        1: 'Cs2.mp3',
-        2: 'E2.mp3',
-        3: 'Fs2.mp3',
-    },
-    fadeOut: '64n',
-    baseUrl: 'https://tonejs.github.io/audio/casio/',
-}).toDestination();
 
 const salamanderKeys = new Tone.Sampler({
     urls: {
@@ -75,28 +62,6 @@ const kick = new Tone.MembraneSynth({
     volume: -10,
 }).connect(drumCompress);
 
-const bass = new Tone.FMSynth({
-    harmonicity: 1,
-    modulationIndex: 3.5,
-    oscillator: {
-        type: 'custom',
-        partials: [0, 1, 0, 2],
-    },
-    envelope: {
-        attack: 0.08,
-        decay: 0.3,
-        sustain: 0,
-    },
-    modulation: {
-        type: 'square',
-    },
-    modulationEnvelope: {
-        attack: 0.1,
-        decay: 0.2,
-        sustain: 0.3,
-        release: 0.01,
-    },
-}).toDestination();
 const monoBass = new Tone.MonoSynth({
     volume: -16,
     envelope: {
@@ -288,7 +253,6 @@ let hihatSeq;
 let keysSeq;
 let bassSeq;
 
-let lastTrackMinterAddress;
 export const generateTrackAudioFrom4Wallets = (
     trackMinterAddress = ACCOUNTS[0],
     bandmate1Address = ACCOUNTS[1],
@@ -311,8 +275,6 @@ export const generateTrackAudioFrom4Wallets = (
         bandmate2Address,
         bandmate3Address,
     });
-
-    lastTrackMinterAddress = trackMinterAddress
 
     let splitArr = trackMinterAddress.split('x');
     const fortyChars = []
@@ -475,7 +437,7 @@ export const generateAudioFromWallet = (address) => {
 };
 
 let isInitialized = false;
-export const togglePlayback = async (address = DEFAULT_ADDRESS) => {
+export const togglePlayback = async (address) => {
     console.log('togglePlayback', address, isInitialized);
 
     if (!isInitialized) {
@@ -525,7 +487,7 @@ export const toggleTrackAudioPlayback = async (
     return false;
 }
 
-export const downloadAudio = async (address = DEFAULT_ADDRESS) => {
+export const downloadAudio = async (address) => {
     console.log('downloadAudio', address, isInitialized);
 
     if (!address) {
