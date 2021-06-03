@@ -20,9 +20,7 @@ import Searchable from './components/Searchable';
 import * as api from './api';
 import * as metaMask from './utils/metaMask';
 
-import './App.css';
-
-import 'bootstrap/dist/css/bootstrap.min.css';
+import './App.scss';
 
 export class App extends React.Component {
   state = {
